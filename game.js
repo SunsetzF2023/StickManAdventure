@@ -9,7 +9,9 @@ class StickManAdventure {
             defense: 0,
             level: 1,
             experience: 0,
-            eventsSurvived: 0
+            eventsSurvived: 0,
+            accuracy: 0.6, // 命中率
+            luck: 3 // 运气值
         };
         
         this.currentEnemy = null;
@@ -21,6 +23,9 @@ class StickManAdventure {
         this.walkingAnimation = null;
         this.battleSpeed = 1; // 战斗速度倍数
         this.autoBattleInterval = null;
+        
+        // 初始化战斗引擎
+        this.battleEngine = new BattleEngine();
         
         this.initializeElements();
         this.bindEvents();

@@ -74,6 +74,38 @@
                 </div>
             </div>
             
+            <!-- For The King 风格的战斗系统 -->
+            <div class="ftk-battle-system">
+                <div class="weapon-info">
+                    <span id="currentWeapon">短剑</span> | 
+                    判定格: <span id="weaponSlots">3</span> | 
+                    基础伤害: <span id="weaponDamage">10</span>
+                </div>
+                
+                <div class="battle-controls">
+                    <div class="control-group">
+                        <label>命中率:</label>
+                        <span id="playerAccuracy">0.6</span>
+                    </div>
+                    <div class="control-group">
+                        <label>运气值:</label>
+                        <span id="playerLuck">3</span>
+                    </div>
+                    <div class="luck-checkbox">
+                        <input type="checkbox" id="useLuckInBattle">
+                        <label for="useLuckInBattle">消耗运气保证成功</label>
+                    </div>
+                </div>
+                
+                <div class="slots-container" id="battleSlots">
+                    <!-- 动态生成slot -->
+                </div>
+                
+                <div class="battle-result" id="battleResult">
+                    <div class="result-title">等待攻击...</div>
+                </div>
+            </div>
+            
             <div class="battle-log">
                 <div id="battleLog" class="log-content"></div>
             </div>
@@ -95,6 +127,7 @@
         </div>
     </div>
     
+    <script src="battleEngine.js"></script>
     <script src="game.js"></script>
 </body>
 </html>

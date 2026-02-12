@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For The King 风格战斗系统演示</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+        }
+
+        .battle-container {
+            background: rgba(0, 0, 0, 0.8);
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 800px;
+            width: 90%;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+            border: 2px solid #333;
+        }
+
+        .title {
+            text-align: center;
+            font-size: 28px;
+            margin-bottom: 30px;
+            color: #ffd700;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .weapon-selector {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .weapon-btn {
+            background: #333;
+            color: white;
+            border: 2px solid #555;
+            padding: 10px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .weapon-btn:hover {
+            background: #555;
+            border-color: #777;
+        }
+
+        .weapon-btn.active {
+            background: #ffd700;
+            color: #000;
+            border-color: #ffd700;
+        }
+
+        .current-weapon {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 18px;
+        }
+
+        .weapon-info {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px;
+            border-radius: 10px;
+            display: inline-block;
+        }
+
+        .battle-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .control-input {
+            width: 60px;
+            padding: 5px;
+            border-radius: 5px;
+            border: 1px solid #555;
+            background: #222;
+            color: white;
+            text-align: center;
+        }
+
+        .attack-btn {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(238, 90, 36, 0.3);
+        }
+
+        .attack-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 7px 20px rgba(238, 90, 36, 0.5);
+        }
+
+        .attack-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .luck-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .slots-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            min-height: 80px;
+        }
+
+        .slot {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: 3px solid #555;
+            background: #222;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+            opacity: 0;
+            transform: scale(0);
+            transition: all 0.3s ease;
+        }
+
+        .slot.show {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .slot.success {
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            border-color: #27ae60;
+            color: white;
+            animation: successPulse 0.5s ease;
+        }
+
+        .slot.fail {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            border-color: #e74c3c;
+            color: white;
+            animation: failPulse 0.5s ease;
+        }
+
+        .slot.forced {
+            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+            border-color: #ffd700;
+            color: #000;
+            animation: forcedPulse 0.5s ease;
+        }
+
+        @keyframes successPulse {
+            0% { transform: scale(0); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes failPulse {
+            0% { transform: scale(0); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes forcedPulse {
+            0% { transform: scale(0); }
+            50% { transform: scale(1.3); }
+            100% { transform: scale(1); }
+        }
+
+        .result-display {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            min-height: 100px;
+        }
+
+        .result-title {
+            font-size: 20px;
+            margin-bottom: 10px;
+            color: #ffd700;
+        }
+
+        .result-details {
+            font-size: 16px;
+            line-height: 1.5;
+        }
+
+        .damage-display {
+            font-size: 24px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .damage-display.normal {
+            color: #3498db;
+        }
+
+        .damage-display.perfect {
+            color: #ffd700;
+            animation: perfectGlow 1s ease infinite alternate;
+        }
+
+        @keyframes perfectGlow {
+            from { text-shadow: 0 0 5px #ffd700; }
+            to { text-shadow: 0 0 20px #ffd700, 0 0 30px #ffd700; }
+        }
+
+        .battle-log {
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+            padding: 15px;
+            max-height: 200px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .log-entry {
+            margin-bottom: 5px;
+            opacity: 0;
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .log-entry.success {
+            color: #2ecc71;
+        }
+
+        .log-entry.perfect {
+            color: #ffd700;
+            font-weight: bold;
+        }
+
+        .log-entry.fail {
+            color: #e74c3c;
+        }
+    </style>
+</head>
+<body>
+    <div class="battle-container">
+        <h1 class="title">⚔️ For The King 风格战斗系统 ⚔️</h1>
+        
+        <div class="weapon-selector">
+            <button class="weapon-btn active" data-weapon="0">短剑 (3格)</button>
+            <button class="weapon-btn" data-weapon="1">长剑 (4格)</button>
+            <button class="weapon-btn" data-weapon="2">战斧 (5格)</button>
+        </div>
+        
+        <div class="current-weapon">
+            <div class="weapon-info">
+                <span id="weaponName">短剑</span> | 
+                判定格: <span id="weaponSlots">3</span> | 
+                基础伤害: <span id="weaponDamage">10</span>
+            </div>
+        </div>
+        
+        <div class="battle-controls">
+            <div class="control-group">
+                <label>命中率:</label>
+                <input type="number" id="accuracy" class="control-input" value="0.6" min="0" max="1" step="0.1">
+            </div>
+            <div class="control-group">
+                <label>运气值:</label>
+                <input type="number" id="luck" class="control-input" value="3" min="0" max="10">
+            </div>
+            <div class="luck-checkbox">
+                <input type="checkbox" id="useLuck">
+                <label for="useLuck">消耗1点运气保证成功</label>
+            </div>
+            <button id="attackBtn" class="attack-btn">🎯 执行攻击</button>
+        </div>
+        
+        <div class="slots-container" id="slotsContainer">
+            <!-- 动态生成slot -->
+        </div>
+        
+        <div class="result-display" id="resultDisplay">
+            <div class="result-title">等待攻击...</div>
+            <div class="result-details">选择武器和参数，然后点击执行攻击</div>
+        </div>
+        
+        <div class="battle-log" id="battleLog">
+            <div class="log-entry">战斗系统已准备就绪...</div>
+        </div>
+    </div>
+
+    <script src="battleEngine.js"></script>
+    <script>
+        // 将TypeScript编译为JavaScript后的代码
+        class BattleEngine {
+            constructor() {
+                this.weapons = [
+                    {
+                        name: "短剑",
+                        slots: 3,
+                        base_damage: 10,
+                        special_effect: "快速攻击"
+                    },
+                    {
+                        name: "长剑",
+                        slots: 4,
+                        base_damage: 15,
+                        special_effect: "重击"
+                    },
+                    {
+                        name: "战斧",
+                        slots: 5,
+                        base_damage: 20,
+                        special_effect: "狂暴"
+                    }
+                ];
+                this.currentWeapon = this.weapons[0];
+            }
+
+            performAttack(accuracy, luck = 0, useLuck = false) {
+                const slots = this.currentWeapon.slots;
+                const results = [];
+                let successCount = 0;
+
+                for (let i = 0; i < slots; i++) {
+                    let success;
+                    
+                    if (useLuck && i === 0 && luck > 0) {
+                        success = true;
+                        luck--;
+                    } else {
+                        success = Math.random() < accuracy;
+                    }
+
+                    results.push({
+                        slot: i + 1,
+                        success: success,
+                        forced: useLuck && i === 0 && success
+                    });
+
+                    if (success) successCount++;
+                }
+
+                const successRate = successCount / slots;
+                let damage = this.currentWeapon.base_damage * successRate;
+                let isPerfect = false;
+                let specialTriggered = false;
+
+                if (successRate === 1) {
+                    damage *= 1.2;
+                    isPerfect = true;
+                    specialTriggered = true;
+                }
+
+                return {
+                    weapon: this.currentWeapon,
+                    slot_results: results,
+                    success_count: successCount,
+                    total_slots: slots,
+                    success_rate: successRate,
+                    damage: Math.round(damage),
+                    is_perfect: isPerfect,
+                    special_triggered: specialTriggered,
+                    luck_used: useLuck ? 1 : 0
+                };
+            }
+
+            getCurrentWeapon() {
+                return this.currentWeapon;
+            }
+
+            switchWeapon(weaponIndex) {
+                if (weaponIndex >= 0 && weaponIndex < this.weapons.length) {
+                    this.currentWeapon = this.weapons[weaponIndex];
+                    return true;
+                }
+                return false;
+            }
+
+            getWeapons() {
+                return this.weapons;
+            }
+        }
+
+        // UI控制逻辑
+        class BattleUI {
+            constructor() {
+                this.engine = new BattleEngine();
+                this.isAnimating = false;
+                this.initializeElements();
+                this.bindEvents();
+                this.updateWeaponDisplay();
+                this.createSlots();
+            }
+
+            initializeElements() {
+                this.elements = {
+                    weaponBtns: document.querySelectorAll('.weapon-btn'),
+                    weaponName: document.getElementById('weaponName'),
+                    weaponSlots: document.getElementById('weaponSlots'),
+                    weaponDamage: document.getElementById('weaponDamage'),
+                    accuracy: document.getElementById('accuracy'),
+                    luck: document.getElementById('luck'),
+                    useLuck: document.getElementById('useLuck'),
+                    attackBtn: document.getElementById('attackBtn'),
+                    slotsContainer: document.getElementById('slotsContainer'),
+                    resultDisplay: document.getElementById('resultDisplay'),
+                    battleLog: document.getElementById('battleLog')
+                };
+            }
+
+            bindEvents() {
+                this.elements.weaponBtns.forEach((btn, index) => {
+                    btn.addEventListener('click', () => this.switchWeapon(index));
+                });
+
+                this.elements.attackBtn.addEventListener('click', () => this.performAttack());
+            }
+
+            switchWeapon(index) {
+                if (this.engine.switchWeapon(index)) {
+                    this.elements.weaponBtns.forEach(btn => btn.classList.remove('active'));
+                    this.elements.weaponBtns[index].classList.add('active');
+                    this.updateWeaponDisplay();
+                    this.createSlots();
+                }
+            }
+
+            updateWeaponDisplay() {
+                const weapon = this.engine.getCurrentWeapon();
+                this.elements.weaponName.textContent = weapon.name;
+                this.elements.weaponSlots.textContent = weapon.slots;
+                this.elements.weaponDamage.textContent = weapon.base_damage;
+            }
+
+            createSlots() {
+                const weapon = this.engine.getCurrentWeapon();
+                this.elements.slotsContainer.innerHTML = '';
+                
+                for (let i = 0; i < weapon.slots; i++) {
+                    const slot = document.createElement('div');
+                    slot.className = 'slot';
+                    slot.id = `slot-${i}`;
+                    this.elements.slotsContainer.appendChild(slot);
+                }
+            }
+
+            async performAttack() {
+                if (this.isAnimating) return;
+                
+                this.isAnimating = true;
+                this.elements.attackBtn.disabled = true;
+
+                const accuracy = parseFloat(this.elements.accuracy.value);
+                const luck = parseInt(this.elements.luck.value);
+                const useLuck = this.elements.useLuck.checked;
+
+                if (useLuck && luck <= 0) {
+                    this.addLog('运气值不足！', 'fail');
+                    this.isAnimating = false;
+                    this.elements.attackBtn.disabled = false;
+                    return;
+                }
+
+                const result = this.engine.performAttack(accuracy, luck, useLuck);
+                
+                // 清空之前的显示
+                this.clearSlots();
+                
+                // 动画显示每个slot的结果
+                await this.animateSlots(result.slot_results);
+                
+                // 显示结果
+                this.displayResult(result);
+                
+                // 更新运气值
+                if (useLuck) {
+                    this.elements.luck.value = Math.max(0, luck - 1);
+                }
+
+                // 添加日志
+                this.addBattleLog(result);
+
+                this.isAnimating = false;
+                this.elements.attackBtn.disabled = false;
+            }
+
+            clearSlots() {
+                const slots = this.elements.slotsContainer.querySelectorAll('.slot');
+                slots.forEach(slot => {
+                    slot.className = 'slot';
+                    slot.textContent = '';
+                });
+            }
+
+            async animateSlots(slotResults) {
+                for (let i = 0; i < slotResults.length; i++) {
+                    const result = slotResults[i];
+                    const slotElement = document.getElementById(`slot-${i}`);
+                    
+                    await new Promise(resolve => setTimeout(resolve, 300));
+                    
+                    if (result.forced) {
+                        slotElement.className = 'slot show forced';
+                        slotElement.textContent = '⭐';
+                    } else if (result.success) {
+                        slotElement.className = 'slot show success';
+                        slotElement.textContent = '✓';
+                    } else {
+                        slotElement.className = 'slot show fail';
+                        slotElement.textContent = '✗';
+                    }
+                }
+            }
+
+            displayResult(result) {
+                const successSymbols = result.slot_results.map(r => {
+                    if (r.forced) return '[⭐]';
+                    return r.success ? '[✓]' : '[✗]';
+                }).join(' ');
+
+                const percentage = Math.round(result.success_rate * 100);
+                let resultHTML = `
+                    <div class="result-title">${result.weapon.name} 攻击结果</div>
+                    <div class="result-details">
+                        检定结果: ${successSymbols}<br>
+                        成功率: ${percentage}% (${result.success_count}/${result.total_slots})<br>
+                `;
+
+                if (result.is_perfect) {
+                    resultHTML += `<span style="color: #ffd700;">⚡ 完美触发！武器特效: ${result.weapon.special_effect}</span><br>`;
+                }
+
+                resultHTML += `</div>`;
+                resultHTML += `<div class="damage-display ${result.is_perfect ? 'perfect' : 'normal'}">`;
+                resultHTML += `💥 造成 ${result.damage} 点伤害！`;
+                resultHTML += `</div>`;
+
+                this.elements.resultDisplay.innerHTML = resultHTML;
+            }
+
+            addBattleLog(result) {
+                const successSymbols = result.slot_results.map(r => {
+                    if (r.forced) return '[⭐]';
+                    return r.success ? '[✓]' : '[✗]';
+                }).join(' ');
+
+                const percentage = Math.round(result.success_rate * 100);
+                let logMessage = `【玩家】${result.weapon.name} (${result.total_slots}格检定)：${successSymbols}，造成 ${percentage}% 伤害！`;
+
+                if (result.is_perfect) {
+                    logMessage += ' ⚡完美触发！';
+                }
+
+                if (result.luck_used > 0) {
+                    logMessage += ' (消耗运气)';
+                }
+
+                this.addLog(logMessage, result.is_perfect ? 'perfect' : 'success');
+            }
+
+            addLog(message, type = 'normal') {
+                const logEntry = document.createElement('div');
+                logEntry.className = `log-entry ${type}`;
+                logEntry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+                this.elements.battleLog.appendChild(logEntry);
+                this.elements.battleLog.scrollTop = this.elements.battleLog.scrollHeight;
+            }
+        }
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            new BattleUI();
+        });
+    </script>
+</body>
+</html>
