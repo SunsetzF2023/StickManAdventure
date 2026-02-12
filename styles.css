@@ -19,10 +19,10 @@ body {
     max-width: 400px;
     height: 100vh;
     max-height: 800px;
-    background: rgba(0, 0, 0, 0.9);
-    border: 2px solid #333;
+    background: #000;
+    border: 1px solid #333;
     border-radius: 20px;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8);
     overflow: hidden;
     position: relative;
 }
@@ -54,11 +54,12 @@ body {
 }
 
 .character-stats {
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    background: #000;
+    border: 1px solid #333;
     border-radius: 15px;
     padding: 15px;
     margin-bottom: 20px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    box-shadow: inset 0 1px 3px rgba(255, 255, 255, 0.1);
 }
 
 .stat-item {
@@ -66,7 +67,7 @@ body {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 8px;
-    color: white;
+    color: #fff;
     font-weight: bold;
 }
 
@@ -80,16 +81,18 @@ body {
 
 .stat-value {
     font-size: 16px;
-    background: rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.1);
     padding: 2px 8px;
     border-radius: 10px;
+    border: 1px solid #333;
 }
 
 .character-display {
     display: flex;
     justify-content: flex-start;
     margin-bottom: 20px;
-    background: rgba(255, 255, 255, 0.1);
+    background: #000;
+    border: 1px solid #333;
     border-radius: 15px;
     padding: 10px;
     position: relative;
@@ -105,11 +108,12 @@ body {
 
 .event-display {
     flex: 1;
-    background: rgba(255, 255, 255, 0.8);
+    background: #000;
+    border: 1px solid #333;
     border-radius: 15px;
     padding: 15px;
     margin-bottom: 20px;
-    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1);
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.5);
 }
 
 .event-text {
@@ -127,20 +131,22 @@ body {
 }
 
 .choice-btn {
-    background: linear-gradient(135deg, #333 0%, #555 100%);
-    color: white;
-    border: none;
+    background: #000;
+    color: #fff;
+    border: 1px solid #333;
     padding: 12px 20px;
     border-radius: 10px;
     font-size: 14px;
     cursor: pointer;
     transition: all 0.3s ease;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.5);
 }
 
 .choice-btn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    background: #111;
+    border-color: #555;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.7);
 }
 
 .game-controls {
@@ -150,21 +156,23 @@ body {
 }
 
 .game-btn {
-    background: linear-gradient(135deg, #444 0%, #666 100%);
-    color: white;
-    border: none;
+    background: #000;
+    color: #fff;
+    border: 1px solid #333;
     padding: 15px 30px;
     border-radius: 25px;
     font-size: 16px;
     font-weight: bold;
     cursor: pointer;
     transition: all 0.3s ease;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
 }
 
 .game-btn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 7px 20px rgba(0, 0, 0, 0.3);
+    background: #111;
+    border-color: #555;
+    box-shadow: 0 7px 20px rgba(0, 0, 0, 0.7);
 }
 
 .game-btn:disabled {
@@ -191,7 +199,8 @@ body {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 20px;
-    background: rgba(0, 0, 0, 0.05);
+    background: #000;
+    border: 1px solid #333;
     border-radius: 15px;
     padding: 20px;
 }
@@ -235,23 +244,25 @@ body {
 
 .fighter-stats {
     font-size: 12px;
-    color: #666;
+    color: #fff;
     text-align: center;
 }
 
 .battle-log {
     flex: 1;
-    background: rgba(255, 255, 255, 0.8);
+    background: #000;
+    border: 1px solid #333;
     border-radius: 15px;
     padding: 15px;
     margin-bottom: 20px;
     overflow-y: auto;
     max-height: 150px;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.5);
 }
 
 .log-content {
     font-size: 14px;
-    color: #333;
+    color: #fff;
     line-height: 1.4;
 }
 
@@ -263,21 +274,23 @@ body {
 
 .battle-btn {
     flex: 1;
-    background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
-    color: white;
-    border: none;
+    background: #000;
+    color: #fff;
+    border: 1px solid #333;
     padding: 12px 20px;
     border-radius: 10px;
     font-size: 14px;
     font-weight: bold;
     cursor: pointer;
     transition: all 0.3s ease;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.5);
 }
 
 .battle-btn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    background: #111;
+    border-color: #555;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.7);
 }
 
 .battle-btn:disabled {
@@ -287,11 +300,23 @@ body {
 }
 
 #defendBtn {
-    background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+    background: #000;
+    border-color: #333;
+}
+
+#defendBtn:hover {
+    background: #111;
+    border-color: #555;
 }
 
 #fleeBtn {
-    background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%);
+    background: #000;
+    border-color: #333;
+}
+
+#fleeBtn:hover {
+    background: #111;
+    border-color: #555;
 }
 
 /* 游戏结束界面样式 */
@@ -308,26 +333,28 @@ body {
     font-size: 32px;
     font-weight: bold;
     margin-bottom: 20px;
-    color: #333;
+    color: #fff;
 }
 
 #gameOverMessage {
     font-size: 18px;
-    color: #666;
+    color: #ccc;
     margin-bottom: 20px;
     line-height: 1.4;
 }
 
 .final-stats {
-    background: rgba(0, 0, 0, 0.05);
+    background: #000;
+    border: 1px solid #333;
     border-radius: 15px;
     padding: 20px;
     margin-bottom: 30px;
     width: 100%;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.5);
 }
 
 .final-stats h3 {
-    color: #333;
+    color: #fff;
     margin-bottom: 15px;
     font-size: 18px;
 }
@@ -336,7 +363,7 @@ body {
     display: flex;
     justify-content: space-between;
     margin-bottom: 8px;
-    color: #666;
+    color: #fff;
 }
 
 /* 响应式设计 */
