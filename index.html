@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>火柴人冒险</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="gameContainer">
+        <!-- 游戏主界面 -->
+        <div id="mainScreen" class="screen active">
+            <div class="game-header">
+                <h1>火柴人冒险</h1>
+            </div>
+            
+            <div class="character-stats">
+                <div class="stat-item">
+                    <span class="stat-label">生命值:</span>
+                    <span id="health" class="stat-value">100</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">攻击力:</span>
+                    <span id="attack" class="stat-value">1</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">攻击速度:</span>
+                    <span id="attackSpeed" class="stat-value">1</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">免伤:</span>
+                    <span id="defense" class="stat-value">0</span>
+                </div>
+            </div>
+            
+            <div class="character-display">
+                <canvas id="characterCanvas" width="300" height="200"></canvas>
+            </div>
+            
+            <div class="event-display">
+                <div id="eventText" class="event-text">点击开始你的冒险！</div>
+                <div id="eventChoices" class="event-choices"></div>
+            </div>
+            
+            <div class="game-controls">
+                <button id="startBtn" class="game-btn">开始冒险</button>
+                <button id="continueBtn" class="game-btn" style="display:none;">继续</button>
+            </div>
+        </div>
+        
+        <!-- 战斗界面 -->
+        <div id="battleScreen" class="screen">
+            <div class="battle-header">
+                <h2>战斗！</h2>
+            </div>
+            
+            <div class="battle-arena">
+                <div class="fighter player-side">
+                    <canvas id="playerCanvas" width="150" height="200"></canvas>
+                    <div class="health-bar">
+                        <div id="playerHealth" class="health-fill"></div>
+                    </div>
+                    <div id="playerStats" class="fighter-stats"></div>
+                </div>
+                
+                <div class="vs-indicator">VS</div>
+                
+                <div class="fighter enemy-side">
+                    <canvas id="enemyCanvas" width="150" height="200"></canvas>
+                    <div class="health-bar">
+                        <div id="enemyHealth" class="health-fill"></div>
+                    </div>
+                    <div id="enemyStats" class="fighter-stats"></div>
+                </div>
+            </div>
+            
+            <div class="battle-log">
+                <div id="battleLog" class="log-content"></div>
+            </div>
+            
+            <div class="battle-controls">
+                <button id="attackBtn" class="battle-btn">攻击</button>
+                <button id="defendBtn" class="battle-btn">防御</button>
+                <button id="fleeBtn" class="battle-btn">逃跑</button>
+            </div>
+        </div>
+        
+        <!-- 游戏结束界面 -->
+        <div id="gameOverScreen" class="screen">
+            <div class="game-over-content">
+                <h2 id="gameOverTitle">游戏结束</h2>
+                <p id="gameOverMessage"></p>
+                <div id="finalStats" class="final-stats"></div>
+                <button id="restartBtn" class="game-btn">重新开始</button>
+            </div>
+        </div>
+    </div>
+    
+    <script src="game.js"></script>
+</body>
+</html>
