@@ -19,6 +19,8 @@ class StickManAdventure {
         this.nextBattleIn = this.getRandomBattleInterval();
         this.walkingFrame = 0;
         this.walkingAnimation = null;
+        this.battleSpeed = 1; // 战斗速度倍数
+        this.autoBattleInterval = null;
         
         this.initializeElements();
         this.bindEvents();
@@ -53,9 +55,8 @@ class StickManAdventure {
             playerStats: document.getElementById('playerStats'),
             enemyStats: document.getElementById('enemyStats'),
             battleLog: document.getElementById('battleLog'),
-            attackBtn: document.getElementById('attackBtn'),
-            defendBtn: document.getElementById('defendBtn'),
-            fleeBtn: document.getElementById('fleeBtn'),
+            speedBtn: document.getElementById('speedBtn'),
+            skipBtn: document.getElementById('skipBtn'),
             
             // 游戏结束界面元素
             gameOverTitle: document.getElementById('gameOverTitle'),
@@ -76,9 +77,8 @@ class StickManAdventure {
     bindEvents() {
         this.elements.startBtn.addEventListener('click', () => this.startGame());
         this.elements.continueBtn.addEventListener('click', () => this.continueAdventure());
-        this.elements.attackBtn.addEventListener('click', () => this.playerAttack());
-        this.elements.defendBtn.addEventListener('click', () => this.playerDefend());
-        this.elements.fleeBtn.addEventListener('click', () => this.playerFlee());
+        this.elements.speedBtn.addEventListener('click', () => this.toggleBattleSpeed());
+        this.elements.skipBtn.addEventListener('click', () => this.skipBattle());
         this.elements.restartBtn.addEventListener('click', () => this.restartGame());
     }
     
@@ -384,6 +384,10 @@ class StickManAdventure {
         this.updateBattleUI();
         this.drawBattleCharacters();
         this.addBattleLog(`遭遇了 ${this.currentEnemy.name}！`);
+        this.addBattleLog("自动战斗开始！");
+        
+        // 启动自动战斗
+        this.startAutoBattle();
     }
     
     switchToBattleScreen() {
@@ -419,78 +423,95 @@ class StickManAdventure {
         `;
     }
     
-    playerAttack() {
-        const damage = Math.max(1, this.player.attack - this.currentEnemy.defense);
-        this.currentEnemy.health -= damage;
+    // 自动战斗系统
+    startAutoBattle() {
+        const battleInterval = 1000 / this.battleSpeed; // 根据速度调整间隔
         
-        this.addBattleLog(`你对 ${this.currentEnemy.name} 造成了 ${damage} 点伤害！`);
+        this.autoBattleInterval = setInterval(() => {
+            this.performBattleRound();
+        }, battleInterval);
+    }
+    
+    performBattleRound() {
+        if (!this.inBattle || this.gameOver) {
+            this.stopAutoBattle();
+            return;
+        }
         
-        // 攻击动画
+        // 玩家攻击
+        const playerDamage = Math.max(1, this.player.attack - this.currentEnemy.defense);
+        this.currentEnemy.health -= playerDamage;
+        this.addBattleLog(`你对 ${this.currentEnemy.name} 造成了 ${playerDamage} 点伤害！`);
         this.animateAttack('player');
         
         if (this.currentEnemy.health <= 0) {
+            this.stopAutoBattle();
             this.winBattle();
-        } else {
-            setTimeout(() => this.enemyAttack(), 1000);
+            return;
         }
         
-        this.updateBattleUI();
-        this.disableBattleButtons(true);
-    }
-    
-    playerDefend() {
-        this.addBattleLog("你采取了防御姿态！");
+        // 敌人攻击
         setTimeout(() => {
-            const damage = Math.max(1, Math.floor(this.currentEnemy.attack * 0.5) - this.player.defense);
-            this.player.health -= damage;
-            this.addBattleLog(`${this.currentEnemy.name} 的攻击被削弱，只造成了 ${damage} 点伤害！`);
+            if (!this.inBattle || this.gameOver) return;
+            
+            const enemyDamage = Math.max(1, this.currentEnemy.attack - this.player.defense);
+            this.player.health -= enemyDamage;
+            this.addBattleLog(`${this.currentEnemy.name} 对你造成了 ${enemyDamage} 点伤害！`);
+            this.animateAttack('enemy');
             
             if (this.player.health <= 0) {
+                this.stopAutoBattle();
                 this.loseGame();
-            } else {
-                this.disableBattleButtons(false);
+                return;
             }
             
             this.updateBattleUI();
-        }, 1000);
-        
-        this.disableBattleButtons(true);
-    }
-    
-    playerFlee() {
-        const fleeChance = Math.random();
-        if (fleeChance < 0.6) {
-            this.addBattleLog("你成功逃跑了！");
-            setTimeout(() => {
-                this.inBattle = false;
-                this.switchToMainScreen();
-                this.elements.continueBtn.style.display = 'block';
-                this.elements.eventText.textContent = "你逃跑了，继续你的冒险...";
-            }, 1500);
-        } else {
-            this.addBattleLog("逃跑失败！");
-            setTimeout(() => this.enemyAttack(), 1000);
-        }
-        
-        this.disableBattleButtons(true);
-    }
-    
-    enemyAttack() {
-        const damage = Math.max(1, this.currentEnemy.attack - this.player.defense);
-        this.player.health -= damage;
-        
-        this.addBattleLog(`${this.currentEnemy.name} 对你造成了 ${damage} 点伤害！`);
-        
-        // 攻击动画
-        this.animateAttack('enemy');
-        
-        if (this.player.health <= 0) {
-            this.loseGame();
-        } else {
-            this.disableBattleButtons(false);
-        }
+        }, 200 / this.battleSpeed);
         
         this.updateBattleUI();
+    }
+    
+    stopAutoBattle() {
+        if (this.autoBattleInterval) {
+            clearInterval(this.autoBattleInterval);
+            this.autoBattleInterval = null;
+        }
+    }
+    
+    toggleBattleSpeed() {
+        if (this.battleSpeed === 1) {
+            this.battleSpeed = 2;
+            this.elements.speedBtn.textContent = '2x速度';
+        } else {
+            this.battleSpeed = 1;
+            this.elements.speedBtn.textContent = '1x速度';
+        }
+        
+        // 如果正在战斗，重新启动自动战斗以应用新速度
+        if (this.inBattle && this.autoBattleInterval) {
+            this.stopAutoBattle();
+            this.startAutoBattle();
+        }
+    }
+    
+    skipBattle() {
+        this.stopAutoBattle();
+        
+        // 直接计算战斗结果
+        const playerTotalDamage = this.player.attack * 10; // 假设10回合
+        const enemyTotalDamage = this.currentEnemy.attack * 10;
+        
+        this.addBattleLog("跳过战斗，计算结果...");
+        
+        if (playerTotalDamage >= this.currentEnemy.health) {
+            // 玩家胜利
+            this.currentEnemy.health = 0;
+            this.winBattle();
+        } else {
+            // 玩家失败
+            this.player.health = 0;
+            this.loseGame();
+        }
     }
     
     animateAttack(attacker) {
@@ -507,12 +528,6 @@ class StickManAdventure {
         }
     }
     
-    disableBattleButtons(disabled) {
-        this.elements.attackBtn.disabled = disabled;
-        this.elements.defendBtn.disabled = disabled;
-        this.elements.fleeBtn.disabled = disabled;
-    }
-    
     addBattleLog(message) {
         const logEntry = document.createElement('div');
         logEntry.textContent = message;
@@ -522,6 +537,7 @@ class StickManAdventure {
     }
     
     winBattle() {
+        this.stopAutoBattle();
         this.addBattleLog(`你击败了 ${this.currentEnemy.name}！`);
         
         // 获得奖励
@@ -562,6 +578,7 @@ class StickManAdventure {
     }
     
     loseGame() {
+        this.stopAutoBattle();
         this.gameOver = true;
         this.addBattleLog("你被击败了...");
         
@@ -603,6 +620,9 @@ class StickManAdventure {
     }
     
     restartGame() {
+        // 停止自动战斗
+        this.stopAutoBattle();
+        
         // 重置游戏状态
         this.player = {
             health: 100,
@@ -620,6 +640,8 @@ class StickManAdventure {
         this.gameOver = false;
         this.eventCounter = 0;
         this.nextBattleIn = this.getRandomBattleInterval();
+        this.battleSpeed = 1;
+        this.elements.speedBtn.textContent = '1x速度';
         
         // 切换界面
         this.elements.gameOverScreen.classList.remove('active');
