@@ -31,6 +31,18 @@
                     <span class="stat-label">免伤:</span>
                     <span id="defense" class="stat-value">0</span>
                 </div>
+                <div class="stat-item">
+                    <span class="stat-label">命中率:</span>
+                    <span id="accuracy" class="stat-value">60%</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">运气值:</span>
+                    <span id="luck" class="stat-value">3</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">💰金币:</span>
+                    <span id="gold" class="stat-value">0</span>
+                </div>
             </div>
             
             <div class="character-display">
@@ -45,6 +57,7 @@
             <div class="game-controls">
                 <button id="startBtn" class="game-btn">开始冒险</button>
                 <button id="continueBtn" class="game-btn" style="display:none;">继续</button>
+                <a href="upgrades.html" class="game-btn" style="text-decoration: none; text-align: center;">⚔️ 装备养成</a>
             </div>
         </div>
         
@@ -127,6 +140,7 @@
         </div>
     </div>
     
+    <script src="saveSystem.js"></script>
     <script src="battleEngine.js"></script>
     <script src="game.js"></script>
 </body>

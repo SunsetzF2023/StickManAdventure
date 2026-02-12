@@ -1,17 +1,29 @@
 // 游戏核心类
 class StickManAdventure {
     constructor() {
+        // 初始化存档系统
+        this.saveSystem = new SaveSystem();
+        this.equipmentSystem = new EquipmentSystem();
+        this.upgradeSystem = new UpgradeSystem();
+        
+        // 加载存档数据
+        this.saveData = this.saveSystem.loadSave();
+        
+        // 计算总属性（基础属性 + 装备属性）
+        const equipmentStats = this.equipmentSystem.calculateEquipmentStats(this.saveData.equipment);
+        const totalStats = this.calculateTotalStats(this.saveData.baseStats, equipmentStats);
+        
         this.player = {
-            health: 100,
-            maxHealth: 100,
-            attack: 1,
+            health: totalStats.maxHealth,
+            maxHealth: totalStats.maxHealth,
+            attack: totalStats.attack,
             attackSpeed: 1,
-            defense: 0,
+            defense: totalStats.defense,
             level: 1,
             experience: 0,
             eventsSurvived: 0,
-            accuracy: 0.6, // 命中率
-            luck: 3 // 运气值
+            accuracy: totalStats.accuracy,
+            luck: totalStats.luck
         };
         
         this.currentEnemy = null;
@@ -34,6 +46,16 @@ class StickManAdventure {
         this.startWalkingAnimation();
     }
     
+    calculateTotalStats(baseStats, equipmentStats) {
+        return {
+            maxHealth: baseStats.maxHealth + equipmentStats.maxHealth,
+            attack: baseStats.attack + equipmentStats.attack,
+            defense: baseStats.defense + equipmentStats.defense,
+            accuracy: Math.min(1, baseStats.accuracy + equipmentStats.accuracy),
+            luck: baseStats.luck + equipmentStats.luck
+        };
+    }
+    
     initializeElements() {
         // 获取DOM元素
         this.elements = {
@@ -47,6 +69,9 @@ class StickManAdventure {
             attack: document.getElementById('attack'),
             attackSpeed: document.getElementById('attackSpeed'),
             defense: document.getElementById('defense'),
+            accuracy: document.getElementById('accuracy'),
+            luck: document.getElementById('luck'),
+            gold: document.getElementById('gold'),
             eventText: document.getElementById('eventText'),
             eventChoices: document.getElementById('eventChoices'),
             startBtn: document.getElementById('startBtn'),
@@ -545,39 +570,40 @@ class StickManAdventure {
         this.stopAutoBattle();
         this.addBattleLog(`你击败了 ${this.currentEnemy.name}！`);
         
-        // 获得奖励
-        const expGain = 20 + (this.currentEnemy.maxHealth / 2);
-        this.player.experience += expGain;
+        // 获得金币奖励（替代经验值）
+        const goldGain = 10 + (this.currentEnemy.maxHealth / 2) + Math.floor(Math.random() * 20);
+        this.saveData.gold += goldGain;
+        this.addBattleLog(`获得 ${goldGain} 金币！`);
         
-        // 随机奖励
-        const random = Math.random();
-        if (random < 0.3) {
-            this.player.attack += 1;
-            this.addBattleLog("获得奖励：攻击力+1");
-        } else if (random < 0.6) {
-            this.player.defense += 1;
-            this.addBattleLog("获得奖励：免伤+1");
-        } else {
-            this.player.health = Math.min(this.player.health + 20, this.player.maxHealth);
-            this.addBattleLog("获得奖励：生命值+20");
+        // 随机装备掉落
+        const dropChance = Math.random();
+        if (dropChance < 0.3) { // 30%概率掉落装备
+            const droppedItem = this.equipmentSystem.generateRandomDrop(this.player.level);
+            this.saveData.inventory.push(droppedItem);
+            this.addBattleLog(`获得装备：${droppedItem.name}！`);
         }
         
-        // 检查升级
-        if (this.player.experience >= this.player.level * 50) {
-            this.player.level++;
-            this.player.maxHealth += 10;
-            this.player.health = this.player.maxHealth;
-            this.player.attack += 2;
-            this.addBattleLog(`恭喜升级！现在是等级 ${this.player.level}！`);
+        // 恢复少量生命值
+        const healthRestore = Math.min(20, this.player.maxHealth - this.player.health);
+        if (healthRestore > 0) {
+            this.player.health += healthRestore;
+            this.addBattleLog(`恢复 ${healthRestore} 点生命值`);
         }
         
+        // 更新统计
+        this.saveData.totalWins++;
+        this.saveData.enemiesDefeated++;
+        this.saveData.totalGold += goldGain;
         this.player.eventsSurvived++;
+        
+        // 保存存档
+        this.saveSystem.saveSave(this.saveData);
         
         setTimeout(() => {
             this.inBattle = false;
             this.switchToMainScreen();
             this.elements.continueBtn.style.display = 'block';
-            this.elements.eventText.textContent = `战斗胜利！获得了 ${expGain} 点经验值。继续你的冒险...`;
+            this.elements.eventText.textContent = `战斗胜利！获得 ${goldGain} 金币。继续你的冒险...`;
             this.updateUI();
         }, 2000);
     }
@@ -586,6 +612,10 @@ class StickManAdventure {
         this.stopAutoBattle();
         this.gameOver = true;
         this.addBattleLog("你被击败了...");
+        
+        // 更新统计
+        this.saveData.totalGames++;
+        this.saveSystem.saveSave(this.saveData);
         
         setTimeout(() => {
             this.elements.battleScreen.classList.remove('active');
@@ -613,12 +643,16 @@ class StickManAdventure {
                     <span>${this.player.defense}</span>
                 </div>
                 <div class="final-stat-item">
-                    <span>经验值:</span>
-                    <span>${this.player.experience}</span>
-                </div>
-                <div class="final-stat-item">
                     <span>存活事件:</span>
                     <span>${this.player.eventsSurvived}</span>
+                </div>
+                <div class="final-stat-item">
+                    <span>获得金币:</span>
+                    <span>${this.saveData.gold}</span>
+                </div>
+                <div class="final-stat-item">
+                    <span>总胜场:</span>
+                    <span>${this.saveData.totalWins}</span>
                 </div>
             `;
         }, 1500);
@@ -628,16 +662,21 @@ class StickManAdventure {
         // 停止自动战斗
         this.stopAutoBattle();
         
-        // 重置游戏状态
+        // 重新计算属性（保持养成进度）
+        const equipmentStats = this.equipmentSystem.calculateEquipmentStats(this.saveData.equipment);
+        const totalStats = this.calculateTotalStats(this.saveData.baseStats, equipmentStats);
+        
         this.player = {
-            health: 100,
-            maxHealth: 100,
-            attack: 1,
+            health: totalStats.maxHealth,
+            maxHealth: totalStats.maxHealth,
+            attack: totalStats.attack,
             attackSpeed: 1,
-            defense: 0,
+            defense: totalStats.defense,
             level: 1,
             experience: 0,
-            eventsSurvived: 0
+            eventsSurvived: 0,
+            accuracy: totalStats.accuracy,
+            luck: totalStats.luck
         };
         
         this.currentEnemy = null;
@@ -668,6 +707,9 @@ class StickManAdventure {
         this.elements.attack.textContent = this.player.attack;
         this.elements.attackSpeed.textContent = this.player.attackSpeed;
         this.elements.defense.textContent = this.player.defense;
+        this.elements.accuracy.textContent = `${Math.round(this.player.accuracy * 100)}%`;
+        this.elements.luck.textContent = this.player.luck;
+        this.elements.gold.textContent = this.saveData.gold;
     }
     
     drawCharacter() {
