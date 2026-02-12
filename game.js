@@ -1063,6 +1063,19 @@ class StickManAdventure {
             this.drawCharacter();
         }, 200);
     }
+    
+    drawFighter(ctx, canvas, color, type) {
+        // 清空画布
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        // 设置绘制样式
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 3;
+        ctx.lineCap = 'round';
+        
+        // 绘制火柴人
+        const centerX = canvas.width / 2;
+        const centerY = canvas.height / 2;
         
         if (type === 'player') {
             // 绘制火柴人（玩家）
@@ -1140,30 +1153,21 @@ class StickManAdventure {
                 ctx.stroke();
                 
                 // 腿
-                
-ctx.beginPath();
-ctx.moveTo(centerX, centerY - 15);
-ctx.lineTo(centerX, centerY + 20);
-ctx.stroke();
-                
-ctx.beginPath();
-ctx.moveTo(centerX - 20, centerY);
-ctx.lineTo(centerX + 20, centerY);
-ctx.stroke();
-                
-ctx.beginPath();
-ctx.moveTo(centerX, centerY + 20);
-ctx.lineTo(centerX - 15, centerY + 50);
-ctx.moveTo(centerX, centerY + 20);
-ctx.lineTo(centerX + 15, centerY + 50);
-ctx.stroke();
-}
-}
-        
-stopWalkingAnimation() {
-if (this.walkingAnimation) {
-clearInterval(this.walkingAnimation);
-this.walkingAnimation = null;
+                ctx.beginPath();
+                ctx.moveTo(centerX, centerY + 20);
+                ctx.lineTo(centerX - 15, centerY + 50);
+                ctx.moveTo(centerX, centerY + 20);
+                ctx.lineTo(centerX + 15, centerY + 50);
+                ctx.stroke();
+            }
+        }
+    }
+    
+    stopWalkingAnimation() {
+        if (this.walkingAnimation) {
+            clearInterval(this.walkingAnimation);
+            this.walkingAnimation = null;
+        }
     }
 }
 
