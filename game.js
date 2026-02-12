@@ -36,6 +36,11 @@ class StickManAdventure {
         this.battleSpeed = 1; // 战斗速度倍数
         this.autoBattleInterval = null;
         
+        // 武器动画相关
+        this.attackAnimation = null;
+        this.attackFrame = 0;
+        this.isAttacking = false;
+        
         // 初始化战斗引擎
         this.battleEngine = new BattleEngine();
         
@@ -473,6 +478,7 @@ class StickManAdventure {
         this.currentEnemy.health -= playerDamage;
         this.addBattleLog(`你对 ${this.currentEnemy.name} 造成了 ${playerDamage} 点伤害！`);
         this.animateAttack('player');
+        this.drawBattleCharacters(); // 立即重绘以显示攻击动画
         
         if (this.currentEnemy.health <= 0) {
             this.stopAutoBattle();
@@ -488,6 +494,7 @@ class StickManAdventure {
             this.player.health -= enemyDamage;
             this.addBattleLog(`${this.currentEnemy.name} 对你造成了 ${enemyDamage} 点伤害！`);
             this.animateAttack('enemy');
+            this.drawBattleCharacters(); // 立即重绘以显示攻击动画
             
             if (this.player.health <= 0) {
                 this.stopAutoBattle();
@@ -546,11 +553,24 @@ class StickManAdventure {
     
     animateAttack(attacker) {
         if (attacker === 'player') {
+            // 触发玩家攻击动画
+            this.isAttacking = true;
+            this.attackFrame = 0;
+            
+            // 攻击动画持续500ms
+            this.attackAnimation = setTimeout(() => {
+                this.isAttacking = false;
+                this.attackFrame = 0;
+                this.drawBattleCharacters(); // 重绘以移除攻击效果
+            }, 500 / this.battleSpeed); // 根据战斗速度调整动画时长
+            
+            // 添加震动效果
             this.elements.playerCanvas.classList.add('shake');
             setTimeout(() => {
                 this.elements.playerCanvas.classList.remove('shake');
             }, 500);
         } else {
+            // 敌人攻击动画
             this.elements.enemyCanvas.classList.add('shake');
             setTimeout(() => {
                 this.elements.enemyCanvas.classList.remove('shake');
@@ -757,25 +777,75 @@ class StickManAdventure {
         ctx.lineTo(centerX + 15 + rightLegOffset, centerY + 50);
         ctx.stroke();
         
-        // 绘制生命值条
-        const barWidth = 100;
-        const barHeight = 8;
-        const barX = (canvas.width - barWidth) / 2;
-        const barY = canvas.height - 30;
+        // 绘制武器
+        this.drawWeapon(ctx, centerX, centerY);
+    }
+    
+    drawWeapon(ctx, centerX, centerY) {
+        const weapon = this.saveData.equipment.weapon;
+        if (!weapon) return;
         
-        // 背景
-        ctx.fillStyle = '#ddd';
-        ctx.fillRect(barX, barY, barWidth, barHeight);
+        ctx.strokeStyle = '#ffd700'; // 武器用金色
+        ctx.lineWidth = 4;
         
-        // 生命值
-        const healthPercent = this.player.health / this.player.maxHealth;
-        ctx.fillStyle = healthPercent > 0.3 ? '#27ae60' : '#e74c3c';
-        ctx.fillRect(barX, barY, barWidth * healthPercent, barHeight);
+        // 根据武器类型绘制不同的武器
+        if (weapon.name.includes('匕首')) {
+            // 匕首 - 短小精悍
+            ctx.beginPath();
+            ctx.moveTo(centerX + 25, centerY - 10);
+            ctx.lineTo(centerX + 35, centerY - 25);
+            ctx.lineTo(centerX + 33, centerY - 30);
+            ctx.lineTo(centerX + 23, centerY - 15);
+            ctx.closePath();
+            ctx.stroke();
+            
+            // 护手
+            ctx.beginPath();
+            ctx.moveTo(centerX + 23, centerY - 15);
+            ctx.lineTo(centerX + 27, centerY - 5);
+            ctx.stroke();
+            
+        } else if (weapon.name.includes('剑')) {
+            // 剑 - 经典长剑
+            ctx.beginPath();
+            ctx.moveTo(centerX + 25, centerY - 10);
+            ctx.lineTo(centerX + 30, centerY - 40);
+            ctx.stroke();
+            
+            // 剑柄
+            ctx.beginPath();
+            ctx.moveTo(centerX + 25, centerY - 10);
+            ctx.lineTo(centerX + 20, centerY - 5);
+            ctx.lineTo(centerX + 30, centerY - 5);
+            ctx.closePath();
+            ctx.stroke();
+            
+            // 护手
+            ctx.beginPath();
+            ctx.moveTo(centerX + 20, centerY - 5);
+            ctx.lineTo(centerX + 30, centerY - 5);
+            ctx.stroke();
+            
+        } else if (weapon.name.includes('斧')) {
+            // 斧头 - 大型武器
+            ctx.beginPath();
+            ctx.moveTo(centerX + 25, centerY - 15);
+            ctx.lineTo(centerX + 35, centerY - 20);
+            ctx.lineTo(centerX + 40, centerY - 10);
+            ctx.lineTo(centerX + 30, centerY - 5);
+            ctx.closePath();
+            ctx.stroke();
+            
+            // 斧柄
+            ctx.beginPath();
+            ctx.moveTo(centerX + 30, centerY - 5);
+            ctx.lineTo(centerX + 25, centerY + 10);
+            ctx.stroke();
+        }
         
-        // 边框
-        ctx.strokeStyle = '#333';
-        ctx.lineWidth = 1;
-        ctx.strokeRect(barX, barY, barWidth, barHeight);
+        // 恢复默认样式
+        ctx.strokeStyle = '#fff';
+        ctx.lineWidth = 3;
     }
     
     drawBattleCharacters() {
@@ -783,7 +853,7 @@ class StickManAdventure {
         this.drawFighter(this.playerCtx, this.elements.playerCanvas, '#fff', 'player');
         
         // 绘制敌人
-        this.drawFighter(this.enemyCtx, this.elements.enemyCanvas, this.currentEnemy.color, 'enemy');
+        this.drawFighter(this.enemyCtx, this.elements.enemyCanvas, '#ff6b6b', 'enemy');
     }
     
     drawFighter(ctx, canvas, color, type) {
@@ -795,8 +865,204 @@ class StickManAdventure {
         ctx.lineWidth = 3;
         ctx.lineCap = 'round';
         
+        // 绘制火柴人
         const centerX = canvas.width / 2;
         const centerY = canvas.height / 2;
+        
+        if (type === 'player') {
+            // 绘制玩家火柴人
+            // 头部
+            ctx.beginPath();
+            ctx.arc(centerX, centerY - 30, 15, 0, Math.PI * 2);
+            ctx.stroke();
+            
+            // 身体
+            ctx.beginPath();
+            ctx.moveTo(centerX, centerY - 15);
+            ctx.lineTo(centerX, centerY + 20);
+            ctx.stroke();
+            
+            // 手臂
+            const armSwing = this.isAttacking ? 10 : 0;
+            ctx.beginPath();
+            ctx.moveTo(centerX - 20, centerY - armSwing);
+            ctx.lineTo(centerX + 20, centerY + armSwing);
+            ctx.stroke();
+            
+            // 腿
+            ctx.beginPath();
+            ctx.moveTo(centerX, centerY + 20);
+            ctx.lineTo(centerX - 15, centerY + 50);
+            ctx.moveTo(centerX, centerY + 20);
+            ctx.lineTo(centerX + 15, centerY + 50);
+            ctx.stroke();
+            
+            // 绘制武器
+            this.drawBattleWeapon(ctx, centerX, centerY);
+            
+            // 绘制生命值条
+            this.drawHealthBar(ctx, canvas, this.player.health, this.player.maxHealth);
+            
+        } else {
+            // 绘制敌人（根据类型不同）
+            if (this.currentEnemy.name.includes('哥布林')) {
+                // 哥布林 - 小个子
+                ctx.beginPath();
+                ctx.arc(centerX, centerY - 20, 12, 0, Math.PI * 2);
+                ctx.stroke();
+                
+                ctx.beginPath();
+                ctx.moveTo(centerX, centerY - 8);
+                ctx.lineTo(centerX, centerY + 15);
+                ctx.stroke();
+                
+                ctx.beginPath();
+                ctx.moveTo(centerX - 15, centerY);
+                ctx.lineTo(centerX + 15, centerY);
+                ctx.stroke();
+                
+                ctx.beginPath();
+                ctx.moveTo(centerX, centerY + 15);
+                ctx.lineTo(centerX - 12, centerY + 40);
+                ctx.moveTo(centerX, centerY + 15);
+                ctx.lineTo(centerX + 12, centerY + 40);
+                ctx.stroke();
+            } else if (this.currentEnemy.name.includes('骷髅')) {
+                // 骷髅 - 骨架感
+                ctx.beginPath();
+                ctx.arc(centerX, centerY - 25, 12, 0, Math.PI * 2);
+                ctx.stroke();
+                
+                // 脊柱
+                ctx.beginPath();
+                ctx.moveTo(centerX, centerY - 13);
+                ctx.lineTo(centerX, centerY + 20);
+                ctx.stroke();
+                
+                // 手臂骨骼
+                ctx.beginPath();
+                ctx.moveTo(centerX - 18, centerY - 5);
+                ctx.lineTo(centerX + 18, centerY - 5);
+                ctx.stroke();
+                
+                // 腿骨
+                ctx.beginPath();
+                ctx.moveTo(centerX, centerY + 20);
+                ctx.lineTo(centerX - 10, centerY + 45);
+                ctx.moveTo(centerX, centerY + 20);
+                ctx.lineTo(centerX + 10, centerY + 45);
+                ctx.stroke();
+            } else {
+                // 默认敌人 - 大个子
+                ctx.beginPath();
+                ctx.arc(centerX, centerY - 35, 18, 0, Math.PI * 2);
+                ctx.stroke();
+                
+                ctx.beginPath();
+                ctx.moveTo(centerX, centerY - 17);
+                ctx.lineTo(centerX, centerY + 25);
+                ctx.stroke();
+                
+                ctx.beginPath();
+                ctx.moveTo(centerX - 25, centerY);
+                ctx.lineTo(centerX + 25, centerY);
+                ctx.stroke();
+                
+                ctx.beginPath();
+                ctx.moveTo(centerX, centerY + 25);
+                ctx.lineTo(centerX - 20, centerY + 55);
+                ctx.moveTo(centerX, centerY + 25);
+                ctx.lineTo(centerX + 20, centerY + 55);
+                ctx.stroke();
+            }
+            
+            // 绘制敌人生命值条
+            this.drawHealthBar(ctx, canvas, this.currentEnemy.health, this.currentEnemy.maxHealth);
+        }
+    }
+    
+    drawBattleWeapon(ctx, centerX, centerY) {
+        const weapon = this.saveData.equipment.weapon;
+        if (!weapon) return;
+        
+        ctx.strokeStyle = '#ffd700';
+        ctx.lineWidth = 4;
+        
+        // 攻击动画偏移
+        const attackOffset = this.isAttacking ? 10 : 0;
+        
+        if (weapon.name.includes('匕首')) {
+            // 匕首 - 快速刺击
+            ctx.beginPath();
+            ctx.moveTo(centerX + 25 + attackOffset, centerY - 10);
+            ctx.lineTo(centerX + 35 + attackOffset, centerY - 25);
+            ctx.lineTo(centerX + 33 + attackOffset, centerY - 30);
+            ctx.lineTo(centerX + 23 + attackOffset, centerY - 15);
+            ctx.closePath();
+            ctx.stroke();
+            
+        } else if (weapon.name.includes('剑')) {
+            // 剑 - 刺击动作
+            ctx.beginPath();
+            ctx.moveTo(centerX + 25 + attackOffset, centerY - 10);
+            ctx.lineTo(centerX + 30 + attackOffset, centerY - 40);
+            ctx.stroke();
+            
+            // 剑柄
+            ctx.beginPath();
+            ctx.moveTo(centerX + 25, centerY - 10);
+            ctx.lineTo(centerX + 20, centerY - 5);
+            ctx.lineTo(centerX + 30, centerY - 5);
+            ctx.closePath();
+            ctx.stroke();
+            
+        } else if (weapon.name.includes('斧')) {
+            // 斧 - 大力劈砍
+            const swingAngle = this.isAttacking ? Math.PI / 6 : 0;
+            const swingX = Math.sin(swingAngle) * 15;
+            const swingY = Math.cos(swingAngle) * 15;
+            
+            ctx.beginPath();
+            ctx.moveTo(centerX + 25 + swingX, centerY - 15 + swingY);
+            ctx.lineTo(centerX + 35 + swingX, centerY - 20 + swingY);
+            ctx.lineTo(centerX + 40 + swingX, centerY - 10 + swingY);
+            ctx.lineTo(centerX + 30 + swingX, centerY - 5 + swingY);
+            ctx.closePath();
+            ctx.stroke();
+        }
+        
+        // 恢复默认样式
+        ctx.strokeStyle = '#fff';
+        ctx.lineWidth = 3;
+    }
+    
+    drawHealthBar(ctx, canvas, health, maxHealth) {
+        const barWidth = 80;
+        const barHeight = 6;
+        const barX = (canvas.width - barWidth) / 2;
+        const barY = canvas.height - 20;
+        
+        // 背景
+        ctx.fillStyle = '#333';
+        ctx.fillRect(barX, barY, barWidth, barHeight);
+        
+        // 生命值
+        const healthPercent = health / maxHealth;
+        ctx.fillStyle = healthPercent > 0.3 ? '#27ae60' : '#e74c3c';
+        ctx.fillRect(barX, barY, barWidth * healthPercent, barHeight);
+        
+        // 边框
+        ctx.strokeStyle = '#555';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(barX, barY, barWidth, barHeight);
+    }
+    
+    startWalkingAnimation() {
+        this.walkingAnimation = setInterval(() => {
+            this.walkingFrame = (this.walkingFrame + 1) % 4;
+            this.drawCharacter();
+        }, 200);
+    }
         
         if (type === 'player') {
             // 绘制火柴人（玩家）
@@ -874,50 +1140,30 @@ class StickManAdventure {
                 ctx.stroke();
                 
                 // 腿
-                ctx.beginPath();
-                ctx.moveTo(centerX, centerY + 25);
-                ctx.lineTo(centerX - 15, centerY + 55);
-                ctx.moveTo(centerX, centerY + 25);
-                ctx.lineTo(centerX + 15, centerY + 55);
-                ctx.stroke();
-            } else {
-                // 其他敌人 - 标准火柴人但颜色不同
-                ctx.beginPath();
-                ctx.arc(centerX, centerY - 30, 15, 0, Math.PI * 2);
-                ctx.stroke();
                 
-                ctx.beginPath();
-                ctx.moveTo(centerX, centerY - 15);
-                ctx.lineTo(centerX, centerY + 20);
-                ctx.stroke();
+ctx.beginPath();
+ctx.moveTo(centerX, centerY - 15);
+ctx.lineTo(centerX, centerY + 20);
+ctx.stroke();
                 
-                ctx.beginPath();
-                ctx.moveTo(centerX - 20, centerY);
-                ctx.lineTo(centerX + 20, centerY);
-                ctx.stroke();
+ctx.beginPath();
+ctx.moveTo(centerX - 20, centerY);
+ctx.lineTo(centerX + 20, centerY);
+ctx.stroke();
                 
-                ctx.beginPath();
-                ctx.moveTo(centerX, centerY + 20);
-                ctx.lineTo(centerX - 15, centerY + 50);
-                ctx.moveTo(centerX, centerY + 20);
-                ctx.lineTo(centerX + 15, centerY + 50);
-                ctx.stroke();
-            }
-        }
-    }
-    
-    startWalkingAnimation() {
-        this.walkingAnimation = setInterval(() => {
-            this.walkingFrame = (this.walkingFrame + 1) % 4;
-            this.drawCharacter();
-        }, 200);
-    }
-    
-    stopWalkingAnimation() {
-        if (this.walkingAnimation) {
-            clearInterval(this.walkingAnimation);
-            this.walkingAnimation = null;
-        }
+ctx.beginPath();
+ctx.moveTo(centerX, centerY + 20);
+ctx.lineTo(centerX - 15, centerY + 50);
+ctx.moveTo(centerX, centerY + 20);
+ctx.lineTo(centerX + 15, centerY + 50);
+ctx.stroke();
+}
+}
+        
+stopWalkingAnimation() {
+if (this.walkingAnimation) {
+clearInterval(this.walkingAnimation);
+this.walkingAnimation = null;
     }
 }
 
