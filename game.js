@@ -17,11 +17,14 @@ class StickManAdventure {
         this.gameOver = false;
         this.eventCounter = 0;
         this.nextBattleIn = this.getRandomBattleInterval();
+        this.walkingFrame = 0;
+        this.walkingAnimation = null;
         
         this.initializeElements();
         this.bindEvents();
         this.updateUI();
         this.drawCharacter();
+        this.startWalkingAnimation();
     }
     
     initializeElements() {
@@ -648,7 +651,7 @@ class StickManAdventure {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         
         // 设置绘制样式
-        ctx.strokeStyle = '#333';
+        ctx.strokeStyle = '#fff';
         ctx.lineWidth = 3;
         ctx.lineCap = 'round';
         
@@ -667,18 +670,22 @@ class StickManAdventure {
         ctx.lineTo(centerX, centerY + 20);
         ctx.stroke();
         
-        // 手臂
+        // 手臂（摆动动画）
+        const armSwing = Math.sin(this.walkingFrame * Math.PI / 2) * 5;
         ctx.beginPath();
-        ctx.moveTo(centerX - 20, centerY);
-        ctx.lineTo(centerX + 20, centerY);
+        ctx.moveTo(centerX - 20, centerY - armSwing);
+        ctx.lineTo(centerX + 20, centerY + armSwing);
         ctx.stroke();
         
-        // 腿
+        // 腿（踏步动画）
+        const leftLegOffset = this.walkingFrame % 2 === 0 ? 5 : -5;
+        const rightLegOffset = this.walkingFrame % 2 === 0 ? -5 : 5;
+        
         ctx.beginPath();
         ctx.moveTo(centerX, centerY + 20);
-        ctx.lineTo(centerX - 15, centerY + 50);
+        ctx.lineTo(centerX - 15 + leftLegOffset, centerY + 50);
         ctx.moveTo(centerX, centerY + 20);
-        ctx.lineTo(centerX + 15, centerY + 50);
+        ctx.lineTo(centerX + 15 + rightLegOffset, centerY + 50);
         ctx.stroke();
         
         // 绘制生命值条
@@ -703,8 +710,8 @@ class StickManAdventure {
     }
     
     drawBattleCharacters() {
-        // 绘制玩家
-        this.drawFighter(this.playerCtx, this.elements.playerCanvas, '#3498db', 'player');
+        // 绘制玩家（白色）
+        this.drawFighter(this.playerCtx, this.elements.playerCanvas, '#fff', 'player');
         
         // 绘制敌人
         this.drawFighter(this.enemyCtx, this.elements.enemyCanvas, this.currentEnemy.color, 'enemy');
@@ -827,6 +834,20 @@ class StickManAdventure {
                 ctx.lineTo(centerX + 15, centerY + 50);
                 ctx.stroke();
             }
+        }
+    }
+    
+    startWalkingAnimation() {
+        this.walkingAnimation = setInterval(() => {
+            this.walkingFrame = (this.walkingFrame + 1) % 4;
+            this.drawCharacter();
+        }, 200);
+    }
+    
+    stopWalkingAnimation() {
+        if (this.walkingAnimation) {
+            clearInterval(this.walkingAnimation);
+            this.walkingAnimation = null;
         }
     }
 }
