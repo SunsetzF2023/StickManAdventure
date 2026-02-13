@@ -93,10 +93,8 @@ class StickManAdventure {
             playerHealthDisplay: document.getElementById('playerHealth'),
             enemyHealthDisplay: document.getElementById('enemyHealth'),
             battleLog: document.getElementById('battleLog'),
-            skipBattleBtn: document.getElementById('skipBattleBtn'),
-            speedUpBtn: document.getElementById('speedUpBtn'),
-            speedDownBtn: document.getElementById('speedDownBtn'),
-            battleSpeedDisplay: document.getElementById('battleSpeed'),
+            skipBattleBtn: document.getElementById('skipBtn'), // 修复ID匹配
+            speedBtn: document.getElementById('speedBtn'), // 修复ID匹配
             
             // 游戏结束界面
             gameOverScreen: document.getElementById('gameOverScreen'),
@@ -115,16 +113,17 @@ class StickManAdventure {
         this.elements.skipBattleBtn.addEventListener('click', () => this.skipBattle());
         
         // 战斗速度控制
-        this.elements.speedUpBtn.addEventListener('click', () => this.changeBattleSpeed(1));
-        this.elements.speedDownBtn.addEventListener('click', () => this.changeBattleSpeed(-1));
+        this.elements.speedBtn.addEventListener('click', () => this.changeBattleSpeed());
         
         // 重新开始按钮
         this.elements.restartBtn.addEventListener('click', () => this.restartGame());
         
         // 升级按钮
-        this.elements.upgradesBtn.addEventListener('click', () => {
-            window.open('upgrades.html', '_blank');
-        });
+        if (this.elements.upgradesBtn) {
+            this.elements.upgradesBtn.addEventListener('click', () => {
+                window.open('upgrades.html', '_blank');
+            });
+        }
         
         // 页面可见性变化
         document.addEventListener('visibilitychange', () => this.handleVisibilityChange());
@@ -366,7 +365,6 @@ class StickManAdventure {
     updateBattleUI() {
         this.elements.playerHealthDisplay.textContent = `${this.player.health} / ${this.player.maxHealth}`;
         this.elements.enemyHealthDisplay.textContent = `${this.currentEnemy.health} / ${this.currentEnemy.maxHealth}`;
-        this.elements.battleSpeedDisplay.textContent = `${this.battleSpeed}x`;
     }
     
     // 自动战斗系统
@@ -525,9 +523,19 @@ class StickManAdventure {
         }
     }
     
-    changeBattleSpeed(delta) {
-        this.battleSpeed = Math.max(0.5, Math.min(3, this.battleSpeed + delta));
-        this.elements.battleSpeedDisplay.textContent = `${this.battleSpeed}x`;
+    changeBattleSpeed() {
+        // 循环切换速度：1x -> 2x -> 3x -> 0.5x -> 1x
+        if (this.battleSpeed === 1) {
+            this.battleSpeed = 2;
+        } else if (this.battleSpeed === 2) {
+            this.battleSpeed = 3;
+        } else if (this.battleSpeed === 3) {
+            this.battleSpeed = 0.5;
+        } else {
+            this.battleSpeed = 1;
+        }
+        
+        this.elements.speedBtn.textContent = `${this.battleSpeed}x速度`;
         
         // 如果正在战斗，重新启动自动战斗以应用新速度
         if (this.inBattle && this.autoBattleInterval) {
