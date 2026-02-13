@@ -593,6 +593,215 @@
         .lottery-item.blue .pixel-sprite { border-color: #3498db; }
         .lottery-item.purple .pixel-sprite { border-color: #9b59b6; }
 
+        /* 图鉴样式 */
+        .encyclopedia-container {
+            padding: 20px;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+
+        .encyclopedia-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 12px;
+            color: white;
+        }
+
+        .encyclopedia-header h2 {
+            margin: 0 0 15px 0;
+            font-size: 24px;
+        }
+
+        .discovery-stats {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 15px;
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .stat-value {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .quality-stats {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .quality-stat {
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .quality-stat.white {
+            background: #ffffff;
+            color: #333;
+        }
+
+        .quality-stat.green {
+            background: #27ae60;
+            color: white;
+        }
+
+        .quality-stat.blue {
+            background: #3498db;
+            color: white;
+        }
+
+        .quality-stat.purple {
+            background: #9b59b6;
+            color: white;
+        }
+
+        .encyclopedia-category {
+            margin-bottom: 30px;
+        }
+
+        .encyclopedia-category h3 {
+            margin-bottom: 15px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            text-align: center;
+            color: #2c3e50;
+        }
+
+        .encyclopedia-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .encyclopedia-item {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: 2px solid transparent;
+        }
+
+        .encyclopedia-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .encyclopedia-item.discovered {
+            border-color: #27ae60;
+        }
+
+        .encyclopedia-item.undiscovered {
+            opacity: 0.6;
+            background: #ecf0f1;
+        }
+
+        .encyclopedia-item.quality-white {
+            border-color: #ffffff;
+        }
+
+        .encyclopedia-item.quality-green {
+            border-color: #27ae60;
+        }
+
+        .encyclopedia-item.quality-blue {
+            border-color: #3498db;
+        }
+
+        .encyclopedia-item.quality-purple {
+            border-color: #9b59b6;
+        }
+
+        .item-preview {
+            margin-bottom: 10px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .item-icon {
+            width: 32px;
+            height: 32px;
+            image-rendering: pixelated;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: crisp-edges;
+        }
+
+        .item-placeholder {
+            width: 32px;
+            height: 32px;
+            background: #bdc3c7;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: #7f8c8d;
+        }
+
+        .item-info {
+            font-size: 12px;
+        }
+
+        .item-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #2c3e50;
+        }
+
+        .item-quality {
+            font-size: 10px;
+            margin-bottom: 5px;
+            padding: 2px 6px;
+            border-radius: 10px;
+            display: inline-block;
+        }
+
+        .item-stats {
+            font-size: 10px;
+            color: #7f8c8d;
+            margin-bottom: 5px;
+            line-height: 1.2;
+        }
+
+        .item-price {
+            font-size: 11px;
+            color: #f39c12;
+            font-weight: bold;
+        }
+
+        .lottery-discovery {
+            position: absolute;
+            bottom: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #3498db;
+            color: #fff;
+            font-size: 9px;
+            padding: 2px 6px;
+            border-radius: 8px;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
         /* 装备卡片调整 */
         .item-quality {
             display: flex;
@@ -637,6 +846,7 @@
             <button class="tab-btn" data-tab="equipment">装备管理</button>
             <button class="tab-btn" data-tab="inventory">背包仓库</button>
             <button class="tab-btn" data-tab="lottery">装备抽奖</button>
+            <button class="tab-btn" data-tab="encyclopedia">装备图鉴</button>
         </div>
 
         <!-- 属性升级标签页 -->
@@ -704,10 +914,19 @@
                 </div>
             </div>
         </div>
+        
+        <!-- 装备图鉴标签页 -->
+        <div class="tab-content" id="encyclopedia-tab">
+            <div class="encyclopedia-container" id="encyclopediaContainer">
+                <!-- 动态生成图鉴内容 -->
+            </div>
+        </div>
     </div>
 
     <script src="saveSystem.js"></script>
     <script src="weaponSprites.js"></script>
+    <script src="encyclopediaSystem.js"></script>
+    <script src="enhancedEnemySystem.js"></script>
     <script>
         class UpgradesUI {
             constructor() {
@@ -716,6 +935,7 @@
                 this.upgradeSystem = new UpgradeSystem();
                 this.lotterySystem = new LotterySystem(this.equipmentSystem);
                 this.weaponSpriteSystem = new WeaponSpriteSystem();
+                this.encyclopediaSystem = new EncyclopediaSystem(this.equipmentSystem);
                 this.saveData = this.saveSystem.loadSave();
                 this.selectedItem = null;
                 
@@ -735,7 +955,8 @@
                     tabContents: document.querySelectorAll('.tab-content'),
                     singleDrawBtn: document.getElementById('singleDrawBtn'),
                     multiDrawBtn: document.getElementById('multiDrawBtn'),
-                    lotteryResults: document.getElementById('lotteryResults')
+                    lotteryResults: document.getElementById('lotteryResults'),
+                    encyclopediaContainer: document.getElementById('encyclopediaContainer')
                 };
             }
 
@@ -760,6 +981,11 @@
                 this.elements.tabContents.forEach(content => {
                     content.classList.toggle('active', content.id === `${tabName}-tab`);
                 });
+                
+                // 如果切换到图鉴标签页，更新图鉴显示
+                if (tabName === 'encyclopedia') {
+                    this.updateEncyclopediaDisplay();
+                }
             }
 
             updateUI() {
@@ -1163,6 +1389,9 @@
                         this.weaponSpriteSystem.getWeaponSprite(item.id) : 
                         this.getEquipmentSprite(item);
                     
+                    // 发现新装备并添加到图鉴
+                    const isNewDiscovery = this.encyclopediaSystem.discoverItem(item.id);
+                    
                     // 构建属性文本
                     const statsText = Object.entries(item.stats)
                         .map(([stat, value]) => {
@@ -1178,13 +1407,14 @@
                         .join(' ');
                     
                     itemDiv.innerHTML = `
-                        <div class="lottery-new">NEW</div>
+                        ${isNewDiscovery ? '<div class="lottery-new">NEW</div>' : ''}
                         <div class="lottery-item-sprite">
                             <img src="${spriteUrl}" alt="${item.name}" class="pixel-sprite">
                         </div>
                         <div class="lottery-item-name">${item.name}</div>
                         <div class="lottery-item-type">${this.getTypeDisplayName(item.type)}</div>
                         <div class="lottery-item-stats">${statsText}</div>
+                        ${isNewDiscovery ? '<div class="lottery-discovery">📚 已添加到图鉴</div>' : ''}
                     `;
                     
                     // 添加点击事件查看详情
@@ -1214,6 +1444,11 @@
                     accessory: '饰品'
                 };
                 return typeNames[type] || type;
+            }
+
+            updateEncyclopediaDisplay() {
+                const encyclopediaHTML = this.encyclopediaSystem.generateEncyclopediaHTML();
+                this.elements.encyclopediaContainer.innerHTML = encyclopediaHTML;
             }
 
             showItemDetails(item) {
