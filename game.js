@@ -111,6 +111,12 @@ class StickManAdventure {
             upgradesBtn: document.getElementById('upgradesBtn')
         };
         
+        // 调试信息
+        console.log('Elements initialized:');
+        console.log('eventText:', this.elements.eventText);
+        console.log('startBtn:', this.elements.startBtn);
+        console.log('continueBtn:', this.elements.continueBtn);
+        
         // 安全初始化canvas上下文
         if (this.elements.characterCanvas) {
             this.elements.characterCtx = this.elements.characterCanvas.getContext('2d');
@@ -372,8 +378,13 @@ class StickManAdventure {
     }
     
     showEventResult(text) {
+        console.log('showEventResult called with:', text);
+        console.log('eventText element:', this.elements.eventText);
+        
         if (this.elements.eventText) {
             this.elements.eventText.textContent = text;
+        } else {
+            console.warn('eventText element not found');
         }
     }
     
