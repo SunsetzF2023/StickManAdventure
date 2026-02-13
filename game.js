@@ -444,7 +444,6 @@ class StickManAdventure {
             this.isAttacking = false;
             
             // 敌人使用技能
-            this.enemyRenderer.updateStatus();
             let enemyDamage = Math.max(1, this.currentEnemy.attack - this.player.defense);
             
             // 检查敌人技能
