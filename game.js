@@ -73,14 +73,14 @@ class StickManAdventure {
             // 主界面元素
             mainScreen: document.getElementById('mainScreen'),
             healthDisplay: document.getElementById('health'),
-            maxHealthDisplay: document.getElementById('maxHealth'),
+            maxHealthDisplay: document.getElementById('maxHealth'), // 可能为null
             attackDisplay: document.getElementById('attack'),
             defenseDisplay: document.getElementById('defense'),
             accuracyDisplay: document.getElementById('accuracy'),
             luckDisplay: document.getElementById('luck'),
-            levelDisplay: document.getElementById('level'),
+            levelDisplay: document.getElementById('level'), // 可能为null
             goldDisplay: document.getElementById('gold'),
-            eventsSurvivedDisplay: document.getElementById('eventsSurvived'),
+            eventsSurvivedDisplay: document.getElementById('eventsSurvived'), // 可能为null
             characterCanvas: document.getElementById('characterCanvas'),
             characterCtx: document.getElementById('characterCanvas').getContext('2d'),
             
@@ -134,15 +134,33 @@ class StickManAdventure {
     }
     
     updateUI() {
-        this.elements.healthDisplay.textContent = this.player.health;
-        this.elements.maxHealthDisplay.textContent = this.player.maxHealth;
-        this.elements.attackDisplay.textContent = this.player.attack;
-        this.elements.defenseDisplay.textContent = this.player.defense;
-        this.elements.accuracyDisplay.textContent = (this.player.accuracy * 100).toFixed(0) + '%';
-        this.elements.luckDisplay.textContent = this.player.luck;
-        this.elements.levelDisplay.textContent = this.player.level;
-        this.elements.goldDisplay.textContent = this.saveData.gold;
-        this.elements.eventsSurvivedDisplay.textContent = this.player.eventsSurvived;
+        if (this.elements.healthDisplay) {
+            this.elements.healthDisplay.textContent = this.player.health;
+        }
+        if (this.elements.maxHealthDisplay) {
+            this.elements.maxHealthDisplay.textContent = this.player.maxHealth;
+        }
+        if (this.elements.attackDisplay) {
+            this.elements.attackDisplay.textContent = this.player.attack;
+        }
+        if (this.elements.defenseDisplay) {
+            this.elements.defenseDisplay.textContent = this.player.defense;
+        }
+        if (this.elements.accuracyDisplay) {
+            this.elements.accuracyDisplay.textContent = (this.player.accuracy * 100).toFixed(0) + '%';
+        }
+        if (this.elements.luckDisplay) {
+            this.elements.luckDisplay.textContent = this.player.luck;
+        }
+        if (this.elements.levelDisplay) {
+            this.elements.levelDisplay.textContent = this.player.level;
+        }
+        if (this.elements.goldDisplay) {
+            this.elements.goldDisplay.textContent = this.saveData.gold;
+        }
+        if (this.elements.eventsSurvivedDisplay) {
+            this.elements.eventsSurvivedDisplay.textContent = this.player.eventsSurvived;
+        }
     }
     
     drawCharacter() {
