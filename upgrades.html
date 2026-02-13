@@ -369,6 +369,186 @@
             background: #e74c3c;
             border-color: #e74c3c;
         }
+
+        /* 抽奖界面样式 */
+        .lottery-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .lottery-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .lottery-header h3 {
+            color: #ffd700;
+            font-size: 28px;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(255, 215, 0, 0.3);
+        }
+
+        .lottery-rates {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .rate-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: #fff;
+        }
+
+        .rate-color {
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .white-rate .rate-color { color: #ffffff; }
+        .green-rate .rate-color { color: #27ae60; }
+        .blue-rate .rate-color { color: #3498db; }
+        .purple-rate .rate-color { color: #9b59b6; }
+
+        .lottery-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+
+        .lottery-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: 2px solid #ffd700;
+            border-radius: 15px;
+            padding: 20px 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            min-width: 150px;
+        }
+
+        .lottery-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 215, 0, 0.3);
+            border-color: #fff;
+        }
+
+        .lottery-btn:active {
+            transform: translateY(0);
+        }
+
+        .lottery-btn.multi-btn {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .btn-cost {
+            color: #ffd700;
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .btn-text {
+            color: #fff;
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .btn-guarantee {
+            color: #27ae60;
+            font-size: 12px;
+            font-style: italic;
+        }
+
+        .lottery-results {
+            min-height: 200px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid #333;
+            border-radius: 15px;
+            padding: 20px;
+        }
+
+        .lottery-item {
+            display: inline-block;
+            width: 80px;
+            height: 100px;
+            margin: 5px;
+            border: 2px solid;
+            border-radius: 10px;
+            padding: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: rgba(0, 0, 0, 0.8);
+            position: relative;
+        }
+
+        .lottery-item:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(255, 215, 0, 0.3);
+        }
+
+        .lottery-item.white { border-color: #ffffff; }
+        .lottery-item.green { border-color: #27ae60; }
+        .lottery-item.blue { border-color: #3498db; }
+        .lottery-item.purple { border-color: #9b59b6; }
+
+        .lottery-item-name {
+            color: #fff;
+            font-size: 12px;
+            font-weight: bold;
+            margin-bottom: 5px;
+            line-height: 1.2;
+            height: 28px;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            line-clamp: 2;
+            box-orient: vertical;
+        }
+
+        .lottery-item-type {
+            color: #aaa;
+            font-size: 10px;
+            margin-bottom: 5px;
+        }
+
+        .lottery-item-stats {
+            color: #ffd700;
+            font-size: 10px;
+            line-height: 1.2;
+        }
+
+        .lottery-animation {
+            animation: lotteryGlow 2s ease-in-out infinite;
+        }
+
+        @keyframes lotteryGlow {
+            0%, 100% { box-shadow: 0 0 5px rgba(255, 215, 0, 0.5); }
+            50% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.8); }
+        }
+
+        .lottery-new {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #e74c3c;
+            color: #fff;
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -391,6 +571,7 @@
             <button class="tab-btn active" data-tab="upgrades">属性升级</button>
             <button class="tab-btn" data-tab="equipment">装备管理</button>
             <button class="tab-btn" data-tab="inventory">背包仓库</button>
+            <button class="tab-btn" data-tab="lottery">装备抽奖</button>
         </div>
 
         <!-- 属性升级标签页 -->
@@ -415,6 +596,49 @@
                 <!-- 动态生成背包物品 -->
             </div>
         </div>
+
+        <!-- 装备抽奖标签页 -->
+        <div class="tab-content" id="lottery-tab">
+            <div class="lottery-container">
+                <div class="lottery-header">
+                    <h3>🎰 装备抽奖</h3>
+                    <div class="lottery-rates">
+                        <div class="rate-item white-rate">
+                            <span class="rate-color">■</span>
+                            <span>普通 50%</span>
+                        </div>
+                        <div class="rate-item green-rate">
+                            <span class="rate-color">■</span>
+                            <span>精良 35%</span>
+                        </div>
+                        <div class="rate-item blue-rate">
+                            <span class="rate-color">■</span>
+                            <span>稀有 13%</span>
+                        </div>
+                        <div class="rate-item purple-rate">
+                            <span class="rate-color">■</span>
+                            <span>史诗 2%</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="lottery-buttons">
+                    <button class="lottery-btn single-btn" id="singleDrawBtn">
+                        <div class="btn-cost">50 金币</div>
+                        <div class="btn-text">单次抽奖</div>
+                    </button>
+                    <button class="lottery-btn multi-btn" id="multiDrawBtn">
+                        <div class="btn-cost">450 金币</div>
+                        <div class="btn-text">十连抽奖</div>
+                        <div class="btn-guarantee">保底稀有</div>
+                    </button>
+                </div>
+                
+                <div class="lottery-results" id="lotteryResults">
+                    <!-- 抽奖结果显示区域 -->
+                </div>
+            </div>
+        </div>
     </div>
 
     <script src="saveSystem.js"></script>
@@ -424,6 +648,7 @@
                 this.saveSystem = new SaveSystem();
                 this.equipmentSystem = new EquipmentSystem();
                 this.upgradeSystem = new UpgradeSystem();
+                this.lotterySystem = new LotterySystem(this.equipmentSystem);
                 this.saveData = this.saveSystem.loadSave();
                 this.selectedItem = null;
                 
@@ -440,7 +665,10 @@
                     equipmentSlots: document.getElementById('equipmentSlots'),
                     inventoryGrid: document.getElementById('inventoryGrid'),
                     tabBtns: document.querySelectorAll('.tab-btn'),
-                    tabContents: document.querySelectorAll('.tab-content')
+                    tabContents: document.querySelectorAll('.tab-content'),
+                    singleDrawBtn: document.getElementById('singleDrawBtn'),
+                    multiDrawBtn: document.getElementById('multiDrawBtn'),
+                    lotteryResults: document.getElementById('lotteryResults')
                 };
             }
 
@@ -449,6 +677,10 @@
                 this.elements.tabBtns.forEach(btn => {
                     btn.addEventListener('click', () => this.switchTab(btn.dataset.tab));
                 });
+
+                // 抽奖按钮事件
+                this.elements.singleDrawBtn.addEventListener('click', () => this.performSingleDraw());
+                this.elements.multiDrawBtn.addEventListener('click', () => this.performMultiDraw());
             }
 
             switchTab(tabName) {
@@ -721,6 +953,153 @@
                         document.body.removeChild(notification);
                     }, 300);
                 }, 2000);
+            }
+
+            // 抽奖相关方法
+            performSingleDraw() {
+                if (!this.lotterySystem.canAfford(this.saveData.gold, 'single')) {
+                    this.showNotification('金币不足！', 'error');
+                    return;
+                }
+
+                // 扣除金币
+                this.saveData.gold -= this.lotterySystem.getLotteryCost('single');
+                
+                // 执行抽奖
+                const result = this.lotterySystem.drawSingle();
+                const formattedResult = this.lotterySystem.formatLotteryResults([result]);
+                
+                // 添加到背包
+                this.saveData.inventory.push(result);
+                
+                // 保存数据
+                this.saveSystem.saveSave(this.saveData);
+                
+                // 更新UI
+                this.updateUI();
+                
+                // 显示抽奖结果
+                this.displayLotteryResults(formattedResult);
+                
+                this.showNotification(`获得 ${result.name}！`);
+            }
+
+            performMultiDraw() {
+                if (!this.lotterySystem.canAfford(this.saveData.gold, 'multi')) {
+                    this.showNotification('金币不足！', 'error');
+                    return;
+                }
+
+                // 扣除金币
+                this.saveData.gold -= this.lotterySystem.getLotteryCost('multi');
+                
+                // 执行抽奖
+                const results = this.lotterySystem.drawMulti();
+                const formattedResults = this.lotterySystem.formatLotteryResults(results);
+                
+                // 添加到背包
+                results.forEach(result => {
+                    this.saveData.inventory.push(result);
+                });
+                
+                // 保存数据
+                this.saveSystem.saveSave(this.saveData);
+                
+                // 更新UI
+                this.updateUI();
+                
+                // 显示抽奖结果
+                this.displayLotteryResults(formattedResults);
+                
+                // 统计稀有度
+                const rareCount = results.filter(r => r.quality === 'blue' || r.quality === 'purple').length;
+                if (rareCount > 0) {
+                    this.showNotification(`十连抽获得 ${rareCount} 件稀有装备！`);
+                } else {
+                    this.showNotification('十连抽完成！');
+                }
+            }
+
+            displayLotteryResults(results) {
+                this.elements.lotteryResults.innerHTML = '';
+                
+                results.forEach((item, index) => {
+                    const itemDiv = document.createElement('div');
+                    itemDiv.className = `lottery-item ${item.quality} lottery-animation`;
+                    
+                    // 构建属性文本
+                    const statsText = Object.entries(item.stats)
+                        .map(([stat, value]) => {
+                            const statNames = {
+                                attack: '攻击',
+                                defense: '防御',
+                                maxHealth: '生命',
+                                accuracy: '命中',
+                                luck: '运气'
+                            };
+                            return `${statNames[stat]}:+${value}`;
+                        })
+                        .join(' ');
+                    
+                    itemDiv.innerHTML = `
+                        <div class="lottery-new">NEW</div>
+                        <div class="lottery-item-name">${item.name}</div>
+                        <div class="lottery-item-type">${this.getTypeDisplayName(item.type)}</div>
+                        <div class="lottery-item-stats">${statsText}</div>
+                    `;
+                    
+                    // 添加点击事件查看详情
+                    itemDiv.addEventListener('click', () => {
+                        this.showItemDetails(item);
+                    });
+                    
+                    // 延迟显示动画
+                    setTimeout(() => {
+                        this.elements.lotteryResults.appendChild(itemDiv);
+                    }, index * 100);
+                });
+                
+                // 清除动画类
+                setTimeout(() => {
+                    const items = this.elements.lotteryResults.querySelectorAll('.lottery-item');
+                    items.forEach(item => {
+                        item.classList.remove('lottery-animation');
+                    });
+                }, results.length * 100 + 1000);
+            }
+
+            getTypeDisplayName(type) {
+                const typeNames = {
+                    weapon: '武器',
+                    armor: '防具',
+                    accessory: '饰品'
+                };
+                return typeNames[type] || type;
+            }
+
+            showItemDetails(item) {
+                const statsText = Object.entries(item.stats)
+                    .map(([stat, value]) => {
+                        const statNames = {
+                            attack: '攻击力',
+                            defense: '防御力',
+                            maxHealth: '最大生命',
+                            accuracy: '命中率',
+                            luck: '运气值'
+                        };
+                        const unit = stat === 'accuracy' ? '%' : '';
+                        return `${statNames[stat]}: +${value}${unit}`;
+                    })
+                    .join('\n');
+                
+                const message = `
+【${item.qualityName}】${item.name}
+类型: ${this.getTypeDisplayName(item.type)}
+${statsText}
+售价: ${item.price} 金币
+                `.trim();
+                
+                alert(message);
             }
 
             // 添加测试装备的方法

@@ -154,61 +154,86 @@ class EquipmentSystem {
     generateEquipmentDatabase() {
         return {
             weapons: [
-                // 白色品质武器
-                { id: 'dagger_1', name: '生锈的匕首', quality: 'white', type: 'weapon', stats: { attack: 2 }, price: 10 },
-                { id: 'sword_1', name: '旧长剑', quality: 'white', type: 'weapon', stats: { attack: 3 }, price: 15 },
-                { id: 'axe_1', name: '破损的斧头', quality: 'white', type: 'weapon', stats: { attack: 4 }, price: 20 },
+                // 白色品质武器 - 基础装备
+                { id: 'wooden_sword', name: '木剑', quality: 'white', type: 'weapon', stats: { attack: 2 }, price: 5, sprite: 'wooden_sword' },
+                { id: 'copper_shortsword', name: '铜短剑', quality: 'white', type: 'weapon', stats: { attack: 3 }, price: 10, sprite: 'copper_shortsword' },
+                { id: 'rusty_dagger', name: '生锈匕首', quality: 'white', type: 'weapon', stats: { attack: 2, accuracy: 0.05 }, price: 8, sprite: 'rusty_dagger' },
+                { id: 'stone_hammer', name: '石锤', quality: 'white', type: 'weapon', stats: { attack: 4 }, price: 12, sprite: 'stone_hammer' },
+                { id: 'wooden_bow', name: '木弓', quality: 'white', type: 'weapon', stats: { attack: 3, accuracy: 0.1 }, price: 15, sprite: 'wooden_bow' },
+                { id: 'bronze_spear', name: '青铜矛', quality: 'white', type: 'weapon', stats: { attack: 5 }, price: 18, sprite: 'bronze_spear' },
                 
-                // 绿色品质武器
-                { id: 'dagger_2', name: '精制匕首', quality: 'green', type: 'weapon', stats: { attack: 5, accuracy: 0.1 }, price: 50 },
-                { id: 'sword_2', name: '钢制长剑', quality: 'green', type: 'weapon', stats: { attack: 6, defense: 1 }, price: 60 },
-                { id: 'axe_2', name: '战斧', quality: 'green', type: 'weapon', stats: { attack: 8 }, price: 80 },
+                // 绿色品质武器 - 精良装备
+                { id: 'iron_sword', name: '铁剑', quality: 'green', type: 'weapon', stats: { attack: 6 }, price: 40, sprite: 'iron_sword' },
+                { id: 'silver_dagger', name: '银匕首', quality: 'green', type: 'weapon', stats: { attack: 5, accuracy: 0.15, luck: 1 }, price: 45, sprite: 'silver_dagger' },
+                { id: 'war_hammer', name: '战锤', quality: 'green', type: 'weapon', stats: { attack: 8 }, price: 55, sprite: 'war_hammer' },
+                { id: 'composite_bow', name: '复合弓', quality: 'green', type: 'weapon', stats: { attack: 7, accuracy: 0.2 }, price: 60, sprite: 'composite_bow' },
+                { id: 'steel_spear', name: '钢矛', quality: 'green', type: 'weapon', stats: { attack: 9, accuracy: 0.1 }, price: 65, sprite: 'steel_spear' },
+                { id: 'twin_knives', name: '双刀', quality: 'green', type: 'weapon', stats: { attack: 7, accuracy: 0.25 }, price: 70, sprite: 'twin_knives' },
+                { id: 'iron_club', name: '铁棒', quality: 'green', type: 'weapon', stats: { attack: 10 }, price: 75, sprite: 'iron_club' },
                 
-                // 蓝色品质武器
-                { id: 'dagger_3', name: '暗影匕首', quality: 'blue', type: 'weapon', stats: { attack: 8, accuracy: 0.2, luck: 1 }, price: 150 },
-                { id: 'sword_3', name: '魔法长剑', quality: 'blue', type: 'weapon', stats: { attack: 10, defense: 2, accuracy: 0.1 }, price: 200 },
-                { id: 'axe_3', name: '狂暴战斧', quality: 'blue', type: 'weapon', stats: { attack: 15, luck: 2 }, price: 250 },
+                // 蓝色品质武器 - 稀有装备
+                { id: 'gold_sword', name: '黄金剑', quality: 'blue', type: 'weapon', stats: { attack: 10, luck: 2 }, price: 120, sprite: 'gold_sword' },
+                { id: 'shadow_blade', name: '暗影之刃', quality: 'blue', type: 'weapon', stats: { attack: 9, accuracy: 0.3, luck: 3 }, price: 140, sprite: 'shadow_blade' },
+                { id: 'battle_axe', name: '战斧', quality: 'blue', type: 'weapon', stats: { attack: 15, defense: 1 }, price: 160, sprite: 'battle_axe' },
+                { id: 'elven_bow', name: '精灵弓', quality: 'blue', type: 'weapon', stats: { attack: 12, accuracy: 0.4, luck: 2 }, price: 180, sprite: 'elven_bow' },
+                { id: 'crystal_spear', name: '水晶矛', quality: 'blue', type: 'weapon', stats: { attack: 14, accuracy: 0.25, luck: 3 }, price: 200, sprite: 'crystal_spear' },
+                { id: 'flaming_sword', name: '烈焰之剑', quality: 'blue', type: 'weapon', stats: { attack: 13, luck: 4 }, price: 220, sprite: 'flaming_sword' },
+                { id: 'frost_hammer', name: '冰霜战锤', quality: 'blue', type: 'weapon', stats: { attack: 16, defense: 2 }, price: 240, sprite: 'frost_hammer' },
+                { id: 'lightning_dagger', name: '雷光匕首', quality: 'blue', type: 'weapon', stats: { attack: 11, accuracy: 0.35, luck: 4 }, price: 250, sprite: 'lightning_dagger' },
                 
-                // 紫色品质武器
-                { id: 'dagger_4', name: '幻影之刃', quality: 'purple', type: 'weapon', stats: { attack: 12, accuracy: 0.3, luck: 3 }, price: 500 },
-                { id: 'sword_4', name: '王者之剑', quality: 'purple', type: 'weapon', stats: { attack: 15, defense: 5, accuracy: 0.2 }, price: 600 },
-                { id: 'axe_4', name: '毁灭战斧', quality: 'purple', type: 'weapon', stats: { attack: 25, luck: 5, defense: 3 }, price: 800 }
+                // 紫色品质武器 - 史诗装备
+                { id: 'excalibur', name: '石中剑', quality: 'purple', type: 'weapon', stats: { attack: 18, defense: 3, accuracy: 0.2, luck: 5 }, price: 400, sprite: 'excalibur' },
+                { id: 'muramasa', name: '村正', quality: 'purple', type: 'weapon', stats: { attack: 20, accuracy: 0.4, luck: 6 }, price: 450, sprite: 'muramasa' },
+                { id: 'dragon_slayer', name: '屠龙斧', quality: 'purple', type: 'weapon', stats: { attack: 28, defense: 4, luck: 4 }, price: 500, sprite: 'dragon_slayer' },
+                { id: 'phoenix_bow', name: '凤凰弓', quality: 'purple', type: 'weapon', stats: { attack: 22, accuracy: 0.5, luck: 7 }, price: 550, sprite: 'phoenix_bow' },
+                { id: 'gungnir', name: '永恒之枪', quality: 'purple', type: 'weapon', stats: { attack: 25, accuracy: 0.3, luck: 8 }, price: 600, sprite: 'gungnir' },
+                { id: 'blade_of_abyss', name: '深渊之刃', quality: 'purple', type: 'weapon', stats: { attack: 24, accuracy: 0.45, luck: 10 }, price: 700, sprite: 'blade_of_abyss' },
+                { id: 'thor_hammer', name: '雷神之锤', quality: 'purple', type: 'weapon', stats: { attack: 30, defense: 5, luck: 6 }, price: 800, sprite: 'thor_hammer' },
+                { id: 'celestial_sword', name: '天界圣剑', quality: 'purple', type: 'weapon', stats: { attack: 22, defense: 6, accuracy: 0.25, luck: 12 }, price: 1000, sprite: 'celestial_sword' }
             ],
             
             armors: [
                 // 白色品质盔甲
-                { id: 'cloth_1', name: '破布袍', quality: 'white', type: 'armor', stats: { defense: 1, maxHealth: 10 }, price: 10 },
-                { id: 'leather_1', name: '旧皮甲', quality: 'white', type: 'armor', stats: { defense: 2, maxHealth: 15 }, price: 20 },
+                { id: 'cloth_robe', name: '布袍', quality: 'white', type: 'armor', stats: { defense: 1, maxHealth: 10 }, price: 8, sprite: 'cloth_robe' },
+                { id: 'leather_armor', name: '皮甲', quality: 'white', type: 'armor', stats: { defense: 2, maxHealth: 15 }, price: 15, sprite: 'leather_armor' },
+                { id: 'wooden_shield', name: '木盾', quality: 'white', type: 'armor', stats: { defense: 3 }, price: 12, sprite: 'wooden_shield' },
                 
                 // 绿色品质盔甲
-                { id: 'chain_1', name: '锁子甲', quality: 'green', type: 'armor', stats: { defense: 4, maxHealth: 25 }, price: 60 },
-                { id: 'scale_1', name: '鳞甲', quality: 'green', type: 'armor', stats: { defense: 5, maxHealth: 30, accuracy: -0.05 }, price: 80 },
+                { id: 'chain_mail', name: '锁子甲', quality: 'green', type: 'armor', stats: { defense: 4, maxHealth: 25 }, price: 50, sprite: 'chain_mail' },
+                { id: 'scale_armor', name: '鳞甲', quality: 'green', type: 'armor', stats: { defense: 5, maxHealth: 30, accuracy: -0.05 }, price: 70, sprite: 'scale_armor' },
+                { id: 'iron_shield', name: '铁盾', quality: 'green', type: 'armor', stats: { defense: 6, maxHealth: 20 }, price: 60, sprite: 'iron_shield' },
                 
                 // 蓝色品质盔甲
-                { id: 'plate_1', name: '板甲', quality: 'blue', type: 'armor', stats: { defense: 8, maxHealth: 50, accuracy: -0.1 }, price: 200 },
-                { id: 'magic_1', name: '魔法袍', quality: 'blue', type: 'armor', stats: { maxHealth: 40, luck: 2, accuracy: 0.1 }, price: 180 },
+                { id: 'plate_armor', name: '板甲', quality: 'blue', type: 'armor', stats: { defense: 8, maxHealth: 50, accuracy: -0.1 }, price: 180, sprite: 'plate_armor' },
+                { id: 'magic_robe', name: '魔法袍', quality: 'blue', type: 'armor', stats: { maxHealth: 40, luck: 3, accuracy: 0.1 }, price: 160, sprite: 'magic_robe' },
+                { id: 'steel_shield', name: '钢盾', quality: 'blue', type: 'armor', stats: { defense: 9, maxHealth: 30 }, price: 200, sprite: 'steel_shield' },
                 
                 // 紫色品质盔甲
-                { id: 'dragon_1', name: '龙鳞甲', quality: 'purple', type: 'armor', stats: { defense: 12, maxHealth: 80, luck: 3 }, price: 600 },
-                { id: 'ethereal_1', name: '幽魂战甲', quality: 'purple', type: 'armor', stats: { defense: 8, maxHealth: 60, luck: 5, accuracy: 0.2 }, price: 700 }
+                { id: 'dragon_scale', name: '龙鳞甲', quality: 'purple', type: 'armor', stats: { defense: 12, maxHealth: 80, luck: 4 }, price: 550, sprite: 'dragon_scale' },
+                { id: 'ethereal_armor', name: '幽魂战甲', quality: 'purple', type: 'armor', stats: { defense: 8, maxHealth: 60, luck: 6, accuracy: 0.2 }, price: 650, sprite: 'ethereal_armor' },
+                { id: 'aegis', name: '神盾', quality: 'purple', type: 'armor', stats: { defense: 15, maxHealth: 100, luck: 5 }, price: 800, sprite: 'aegis' }
             ],
             
             accessories: [
                 // 白色品质饰品
-                { id: 'ring_1', name: '铜戒指', quality: 'white', type: 'accessory', stats: { luck: 1 }, price: 15 },
-                { id: 'amulet_1', name: '破护身符', quality: 'white', type: 'accessory', stats: { maxHealth: 5 }, price: 10 },
+                { id: 'copper_ring', name: '铜戒指', quality: 'white', type: 'accessory', stats: { luck: 1 }, price: 10, sprite: 'copper_ring' },
+                { id: 'wooden_amulet', name: '木护身符', quality: 'white', type: 'accessory', stats: { maxHealth: 5 }, price: 8, sprite: 'wooden_amulet' },
+                { id: 'stone_charm', name: '石符', quality: 'white', type: 'accessory', stats: { defense: 1 }, price: 12, sprite: 'stone_charm' },
                 
                 // 绿色品质饰品
-                { id: 'ring_2', name: '银戒指', quality: 'green', type: 'accessory', stats: { luck: 2, accuracy: 0.1 }, price: 50 },
-                { id: 'amulet_2', name: '守护护身符', quality: 'green', type: 'accessory', stats: { defense: 2, luck: 1 }, price: 60 },
+                { id: 'silver_ring', name: '银戒指', quality: 'green', type: 'accessory', stats: { luck: 2, accuracy: 0.1 }, price: 40, sprite: 'silver_ring' },
+                { id: 'protection_amulet', name: '守护护身符', quality: 'green', type: 'accessory', stats: { defense: 2, luck: 1 }, price: 50, sprite: 'protection_amulet' },
+                { id: 'iron_charm', name: '铁符', quality: 'green', type: 'accessory', stats: { maxHealth: 15, defense: 2 }, price: 45, sprite: 'iron_charm' },
                 
                 // 蓝色品质饰品
-                { id: 'ring_3', name: '金戒指', quality: 'blue', type: 'accessory', stats: { luck: 4, accuracy: 0.2, maxHealth: 20 }, price: 150 },
-                { id: 'amulet_3', name: '智慧护身符', quality: 'blue', type: 'accessory', stats: { luck: 3, accuracy: 0.3, defense: 3 }, price: 200 },
+                { id: 'gold_ring', name: '金戒指', quality: 'blue', type: 'accessory', stats: { luck: 4, accuracy: 0.2, maxHealth: 20 }, price: 140, sprite: 'gold_ring' },
+                { id: 'wisdom_amulet', name: '智慧护身符', quality: 'blue', type: 'accessory', stats: { luck: 3, accuracy: 0.3, defense: 3 }, price: 180, sprite: 'wisdom_amulet' },
+                { id: 'magic_charm', name: '魔符', quality: 'blue', type: 'accessory', stats: { luck: 5, accuracy: 0.25, maxHealth: 25 }, price: 200, sprite: 'magic_charm' },
                 
                 // 紫色品质饰品
-                { id: 'ring_4', name: '永恒戒指', quality: 'purple', type: 'accessory', stats: { luck: 6, accuracy: 0.4, maxHealth: 40 }, price: 500 },
-                { id: 'amulet_4', name: '神圣护身符', quality: 'purple', type: 'accessory', stats: { luck: 8, accuracy: 0.5, defense: 5, maxHealth: 60 }, price: 800 }
+                { id: 'eternal_ring', name: '永恒戒指', quality: 'purple', type: 'accessory', stats: { luck: 7, accuracy: 0.4, maxHealth: 40 }, price: 450, sprite: 'eternal_ring' },
+                { id: 'divine_amulet', name: '神圣护身符', quality: 'purple', type: 'accessory', stats: { luck: 9, accuracy: 0.5, defense: 5, maxHealth: 60 }, price: 750, sprite: 'divine_amulet' },
+                { id: 'legendary_charm', name: '传说符文', quality: 'purple', type: 'accessory', stats: { luck: 12, accuracy: 0.6, defense: 8, maxHealth: 80 }, price: 1000, sprite: 'legendary_charm' }
             ]
         };
     }
@@ -399,5 +424,126 @@ class UpgradeSystem {
         }
         
         return info;
+    }
+}
+
+// 抽奖系统
+class LotterySystem {
+    constructor(equipmentSystem) {
+        this.equipmentSystem = equipmentSystem;
+        this.lotteryCosts = {
+            single: 50,    // 单抽
+            multi: 450     // 十抽
+        };
+        
+        // 抽奖概率配置
+        this.lotteryRates = {
+            white: 0.50,   // 50% 普通装备
+            green: 0.35,   // 35% 精良装备
+            blue: 0.13,    // 13% 稀有装备
+            purple: 0.02   // 2% 史诗装备
+        };
+    }
+
+    // 执行单次抽奖
+    drawSingle() {
+        return this.performDraw();
+    }
+
+    // 执行十连抽
+    drawMulti() {
+        const results = [];
+        let guaranteedRare = false;
+        
+        for (let i = 0; i < 10; i++) {
+            // 十连抽保底：前9次没有蓝色或紫色装备，第10次必定获得
+            if (i === 9 && !guaranteedRare) {
+                const quality = Math.random() < 0.8 ? 'blue' : 'purple';
+                results.push(this.getEquipmentByQuality(quality));
+            } else {
+                const equipment = this.performDraw();
+                if (equipment.quality === 'blue' || equipment.quality === 'purple') {
+                    guaranteedRare = true;
+                }
+                results.push(equipment);
+            }
+        }
+        
+        return results;
+    }
+
+    // 执行抽奖逻辑
+    performDraw() {
+        const quality = this.getRandomQuality();
+        return this.getEquipmentByQuality(quality);
+    }
+
+    // 随机获取品质
+    getRandomQuality() {
+        const random = Math.random();
+        let cumulative = 0;
+        
+        for (const [quality, rate] of Object.entries(this.lotteryRates)) {
+            cumulative += rate;
+            if (random <= cumulative) {
+                return quality;
+            }
+        }
+        
+        return 'white';
+    }
+
+    // 根据品质获取随机装备
+    getEquipmentByQuality(quality) {
+        const allEquipment = this.equipmentSystem.getAllEquipment();
+        const qualityEquipment = allEquipment.filter(item => item.quality === quality);
+        
+        if (qualityEquipment.length === 0) {
+            // 如果没有对应品质的装备，返回白色装备
+            return this.getEquipmentByQuality('white');
+        }
+        
+        const randomIndex = Math.floor(Math.random() * qualityEquipment.length);
+        return { ...qualityEquipment[randomIndex] }; // 返回副本避免修改原数据
+    }
+
+    // 获取抽奖费用
+    getLotteryCost(type) {
+        return this.lotteryCosts[type] || 0;
+    }
+
+    // 获取抽奖概率信息
+    getLotteryRates() {
+        return { ...this.lotteryRates };
+    }
+
+    // 检查金币是否足够
+    canAfford(gold, type) {
+        return gold >= this.getLotteryCost(type);
+    }
+
+    // 格式化抽奖结果
+    formatLotteryResults(results) {
+        return results.map(item => ({
+            id: item.id,
+            name: item.name,
+            quality: item.quality,
+            qualityName: this.equipmentSystem.qualityNames[item.quality],
+            qualityColor: this.equipmentSystem.getQualityColor(item.quality),
+            type: item.type,
+            stats: item.stats,
+            price: item.price,
+            sprite: item.sprite
+        }));
+    }
+
+    // 获取品质权重（用于显示）
+    getQualityWeights() {
+        return {
+            white: { weight: 50, color: '#ffffff', name: '普通' },
+            green: { weight: 35, color: '#27ae60', name: '精良' },
+            blue: { weight: 13, color: '#3498db', name: '稀有' },
+            purple: { weight: 2, color: '#9b59b6', name: '史诗' }
+        };
     }
 }
