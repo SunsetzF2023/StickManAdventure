@@ -952,6 +952,114 @@ class StickManAdventure {
                 ctx.moveTo(centerX, centerY + 20);
                 ctx.lineTo(centerX + 10, centerY + 45);
                 ctx.stroke();
+            } else if (this.currentEnemy.name.includes('野狼')) {
+                // 野狼 - 四足动物
+                ctx.beginPath();
+                ctx.arc(centerX, centerY - 25, 14, 0, Math.PI * 2);
+                ctx.stroke();
+                
+                // 身体（倾斜）
+                ctx.beginPath();
+                ctx.moveTo(centerX, centerY - 11);
+                ctx.lineTo(centerX + 10, centerY + 15);
+                ctx.stroke();
+                
+                // 前腿
+                ctx.beginPath();
+                ctx.moveTo(centerX + 10, centerY + 15);
+                ctx.lineTo(centerX + 5, centerY + 35);
+                ctx.moveTo(centerX + 10, centerY + 15);
+                ctx.lineTo(centerX + 15, centerY + 35);
+                ctx.stroke();
+                
+                // 后腿
+                ctx.beginPath();
+                ctx.moveTo(centerX, centerY + 15);
+                ctx.lineTo(centerX - 5, centerY + 40);
+                ctx.moveTo(centerX, centerY + 15);
+                ctx.lineTo(centerX + 5, centerY + 40);
+                ctx.stroke();
+                
+                // 尾巴
+                ctx.beginPath();
+                ctx.moveTo(centerX, centerY);
+                ctx.quadraticCurveTo(centerX - 20, centerY + 10, centerX - 25, centerY);
+                ctx.stroke();
+            } else if (this.currentEnemy.name.includes('强盗')) {
+                // 强盗 - 类似人类但更大
+                ctx.beginPath();
+                ctx.arc(centerX, centerY - 35, 16, 0, Math.PI * 2);
+                ctx.stroke();
+                
+                ctx.beginPath();
+                ctx.moveTo(centerX, centerY - 19);
+                ctx.lineTo(centerX, centerY + 25);
+                ctx.stroke();
+                
+                ctx.beginPath();
+                ctx.moveTo(centerX - 25, centerY);
+                ctx.lineTo(centerX + 25, centerY);
+                ctx.stroke();
+                
+                ctx.beginPath();
+                ctx.moveTo(centerX, centerY + 25);
+                ctx.lineTo(centerX - 18, centerY + 55);
+                ctx.moveTo(centerX, centerY + 25);
+                ctx.lineTo(centerX + 18, centerY + 55);
+                ctx.stroke();
+            } else if (this.currentEnemy.name.includes('暗影')) {
+                // 暗影刺客 - 瘦长
+                ctx.beginPath();
+                ctx.arc(centerX, centerY - 30, 10, 0, Math.PI * 2);
+                ctx.stroke();
+                
+                ctx.beginPath();
+                ctx.moveTo(centerX, centerY - 20);
+                ctx.lineTo(centerX, centerY + 30);
+                ctx.stroke();
+                
+                ctx.beginPath();
+                ctx.moveTo(centerX - 20, centerY);
+                ctx.lineTo(centerX + 20, centerY);
+                ctx.stroke();
+                
+                ctx.beginPath();
+                ctx.moveTo(centerX, centerY + 30);
+                ctx.lineTo(centerX - 12, centerY + 60);
+                ctx.moveTo(centerX, centerY + 30);
+                ctx.lineTo(centerX + 12, centerY + 60);
+                ctx.stroke();
+            } else if (this.currentEnemy.name.includes('石像')) {
+                // 石像鬼 - 石头质感
+                ctx.beginPath();
+                ctx.arc(centerX, centerY - 30, 15, 0, Math.PI * 2);
+                ctx.stroke();
+                
+                // 粗壮身体
+                ctx.beginPath();
+                ctx.moveTo(centerX, centerY - 15);
+                ctx.lineTo(centerX, centerY + 20);
+                ctx.stroke();
+                
+                // 翅膀
+                ctx.beginPath();
+                ctx.moveTo(centerX - 15, centerY - 5);
+                ctx.lineTo(centerX - 30, centerY + 5);
+                ctx.moveTo(centerX + 15, centerY - 5);
+                ctx.lineTo(centerX + 30, centerY + 5);
+                ctx.stroke();
+                
+                ctx.beginPath();
+                ctx.moveTo(centerX - 25, centerY);
+                ctx.lineTo(centerX + 25, centerY);
+                ctx.stroke();
+                
+                ctx.beginPath();
+                ctx.moveTo(centerX, centerY + 20);
+                ctx.lineTo(centerX - 15, centerY + 50);
+                ctx.moveTo(centerX, centerY + 20);
+                ctx.lineTo(centerX + 15, centerY + 50);
+                ctx.stroke();
             } else {
                 // 默认敌人 - 大个子
                 ctx.beginPath();
