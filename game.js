@@ -83,6 +83,10 @@ class StickManAdventure {
             eventsSurvivedDisplay: document.getElementById('eventsSurvived'), // 可能为null
             characterCanvas: document.getElementById('characterCanvas'),
             characterCtx: null, // 将在下面安全初始化
+            eventText: document.getElementById('eventText'), // 添加事件文本元素
+            eventChoices: document.getElementById('eventChoices'), // 添加事件选择元素
+            startBtn: document.getElementById('startBtn'), // 添加开始按钮
+            continueBtn: document.getElementById('continueBtn'), // 添加继续按钮
             
             // 战斗界面元素
             battleScreen: document.getElementById('battleScreen'),
@@ -120,6 +124,16 @@ class StickManAdventure {
     }
     
     bindEvents() {
+        // 开始游戏按钮
+        if (this.elements.startBtn) {
+            this.elements.startBtn.addEventListener('click', () => this.startGame());
+        }
+        
+        // 继续游戏按钮
+        if (this.elements.continueBtn) {
+            this.elements.continueBtn.addEventListener('click', () => this.continueGame());
+        }
+        
         // 跳过战斗按钮
         this.elements.skipBattleBtn.addEventListener('click', () => this.skipBattle());
         
@@ -358,7 +372,9 @@ class StickManAdventure {
     }
     
     showEventResult(text) {
-        this.elements.eventText.textContent = text;
+        if (this.elements.eventText) {
+            this.elements.eventText.textContent = text;
+        }
     }
     
     // 战斗系统
@@ -714,6 +730,25 @@ class StickManAdventure {
     }
     
     // 游戏主循环
+    startGame() {
+        this.elements.startBtn.style.display = 'none';
+        this.elements.continueBtn.style.display = 'inline-block';
+        this.startGameLoop();
+        this.showEventResult('冒险开始！点击继续按钮进行下一个事件...');
+    }
+    
+    continueGame() {
+        // 手动触发下一个事件
+        this.eventCounter++;
+        
+        // 检查是否应该触发战斗
+        if (this.eventCounter >= this.nextBattleIn) {
+            this.startBattle();
+        } else {
+            this.generateRandomEvent();
+        }
+    }
+    
     startGameLoop() {
         setInterval(() => {
             if (!this.inBattle && !this.gameOver) {
