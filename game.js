@@ -82,14 +82,14 @@ class StickManAdventure {
             goldDisplay: document.getElementById('gold'),
             eventsSurvivedDisplay: document.getElementById('eventsSurvived'), // 可能为null
             characterCanvas: document.getElementById('characterCanvas'),
-            characterCtx: document.getElementById('characterCanvas').getContext('2d'),
+            characterCtx: null, // 将在下面安全初始化
             
             // 战斗界面元素
             battleScreen: document.getElementById('battleScreen'),
             playerCanvas: document.getElementById('playerCanvas'),
-            playerCtx: document.getElementById('playerCanvas').getContext('2d'),
+            playerCtx: null, // 将在下面安全初始化
             enemyCanvas: document.getElementById('enemyCanvas'),
-            enemyCtx: document.getElementById('enemyCanvas').getContext('2d'),
+            enemyCtx: null, // 将在下面安全初始化
             playerHealthDisplay: document.getElementById('playerHealth'),
             enemyHealthDisplay: document.getElementById('enemyHealth'),
             battleLog: document.getElementById('battleLog'),
@@ -106,6 +106,17 @@ class StickManAdventure {
             // 升级界面按钮
             upgradesBtn: document.getElementById('upgradesBtn')
         };
+        
+        // 安全初始化canvas上下文
+        if (this.elements.characterCanvas) {
+            this.elements.characterCtx = this.elements.characterCanvas.getContext('2d');
+        }
+        if (this.elements.playerCanvas) {
+            this.elements.playerCtx = this.elements.playerCanvas.getContext('2d');
+        }
+        if (this.elements.enemyCanvas) {
+            this.elements.enemyCtx = this.elements.enemyCanvas.getContext('2d');
+        }
     }
     
     bindEvents() {
@@ -164,8 +175,14 @@ class StickManAdventure {
     }
     
     drawCharacter() {
-        const ctx = this.characterCtx;
-        const canvas = this.characterCanvas;
+        const ctx = this.elements.characterCtx;
+        const canvas = this.elements.characterCanvas;
+        
+        // 检查画布和上下文是否存在
+        if (!ctx || !canvas) {
+            console.warn('Character canvas not available');
+            return;
+        }
         
         // 清空画布
         ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -252,9 +269,15 @@ class StickManAdventure {
     }
 
     drawBattleCharacters() {
+        // 检查战斗画布是否存在
+        if (!this.elements.playerCtx || !this.elements.enemyCtx) {
+            console.warn('Battle canvas not available');
+            return;
+        }
+        
         // 清空画布
-        this.playerCtx.clearRect(0, 0, this.elements.playerCanvas.width, this.elements.playerCanvas.height);
-        this.enemyCtx.clearRect(0, 0, this.elements.enemyCanvas.width, this.elements.enemyCanvas.height);
+        this.elements.playerCtx.clearRect(0, 0, this.elements.playerCanvas.width, this.elements.playerCanvas.height);
+        this.elements.enemyCtx.clearRect(0, 0, this.elements.enemyCanvas.width, this.elements.enemyCanvas.height);
         
         // 获取画布中心
         const playerCenterX = this.elements.playerCanvas.width / 2;
@@ -268,7 +291,7 @@ class StickManAdventure {
         
         // 渲染玩家
         this.playerRenderer.render(
-            this.playerCtx, 
+            this.elements.playerCtx, 
             playerCenterX + this.playerRenderer.position.x, 
             playerCenterY + this.playerRenderer.position.y, 
             '#ffffff'
@@ -278,7 +301,7 @@ class StickManAdventure {
         const weapon = this.saveData.equipment.weapon;
         if (weapon) {
             this.playerRenderer.renderWeapon(
-                this.playerCtx,
+                this.elements.playerCtx,
                 playerCenterX + this.playerRenderer.position.x, 
                 playerCenterY + this.playerRenderer.position.y,
                 weapon.id,
@@ -288,15 +311,15 @@ class StickManAdventure {
         
         // 渲染敌人
         this.enemyRenderer.render(
-            this.enemyCtx, 
+            this.elements.enemyCtx, 
             enemyCenterX + this.enemyRenderer.position.x, 
             enemyCenterY + this.enemyRenderer.position.y, 
             this.currentEnemy.color
         );
         
         // 渲染动画效果
-        this.animationSystem.render(this.playerCtx);
-        this.animationSystem.render(this.enemyCtx);
+        this.animationSystem.render(this.elements.playerCtx);
+        this.animationSystem.render(this.elements.enemyCtx);
     }
     
     startWalkingAnimation() {
