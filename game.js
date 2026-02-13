@@ -6,9 +6,16 @@ class StickManAdventure {
         this.equipmentSystem = new EquipmentSystem();
         this.upgradeSystem = new UpgradeSystem();
         this.weaponSpriteSystem = new WeaponSpriteSystem();
+        this.encyclopediaSystem = new EncyclopediaSystem(this.equipmentSystem);
+        this.enhancedEnemySystem = new EnhancedEnemySystem();
         
         // 武器图片缓存
         this.weaponImageCache = {};
+        
+        // 动画系统
+        this.animationSystem = new BattleAnimationSystem();
+        this.playerRenderer = new StickmanRenderer();
+        this.enemyRenderer = new StickmanRenderer();
         
         // 加载存档数据
         this.saveData = this.saveSystem.loadSave();
@@ -404,30 +411,26 @@ class StickManAdventure {
         this.eventCounter = 0;
         this.nextBattleIn = this.getRandomBattleInterval();
         
-        // 生成随机敌人
-        const enemyTypes = [
-            { name: "哥布林", health: 30, attack: 2, defense: 0, color: "#27ae60" },
-            { name: "骷髅战士", health: 50, attack: 3, defense: 1, color: "#95a5a6" },
-            { name: "野狼", health: 40, attack: 4, defense: 0, color: "#8b4513" },
-            { name: "强盗", health: 60, attack: 3, defense: 2, color: "#8b0000" },
-            { name: "暗影刺客", health: 35, attack: 5, defense: 0, color: "#2c3e50" },
-            { name: "石像鬼", health: 80, attack: 2, defense: 3, color: "#696969" }
-        ];
+        // 使用增强敌人系统生成敌人
+        this.currentEnemy = this.enhancedEnemySystem.generateEnemy(
+            this.saveData.baseStats.level, 
+            this.saveData.eventsSurvived
+        );
         
-        const enemyType = enemyTypes[Math.floor(Math.random() * enemyTypes.length)];
-        this.currentEnemy = {
-            name: enemyType.name,
-            health: enemyType.health + (this.player.level * 10),
-            maxHealth: enemyType.health + (this.player.level * 10),
-            attack: enemyType.attack + Math.floor(this.player.level / 2),
-            defense: enemyType.defense,
-            color: enemyType.color
-        };
+        // 初始化渲染器位置
+        this.playerRenderer.position = { x: -50, y: 0 };
+        this.enemyRenderer.position = { x: 50, y: 0 };
+        this.playerRenderer.facing = 1;
+        this.enemyRenderer.facing = -1;
+        
+        // 重置动画系统
+        this.animationSystem = new BattleAnimationSystem();
         
         this.switchToBattleScreen();
         this.updateBattleUI();
         this.drawBattleCharacters();
         this.addBattleLog(`遭遇了 ${this.currentEnemy.name}！`);
+        this.addBattleLog(`${this.currentEnemy.description}`);
         this.addBattleLog("自动战斗开始！");
         
         // 启动自动战斗
@@ -474,6 +477,31 @@ class StickManAdventure {
         this.autoBattleInterval = setInterval(() => {
             this.performBattleRound();
         }, battleInterval);
+        
+        // 启动动画循环
+        this.startAnimationLoop();
+    }
+    
+    // 动画循环
+    startAnimationLoop() {
+        const animate = () => {
+            if (!this.inBattle) return;
+            
+            // 更新动画系统
+            this.animationSystem.update(16); // 60 FPS
+            
+            // 更新渲染器
+            this.playerRenderer.update(16);
+            this.enemyRenderer.update(16);
+            
+            // 重绘战斗场景
+            this.drawBattleCharacters();
+            
+            // 继续动画循环
+            requestAnimationFrame(animate);
+        };
+        
+        animate();
     }
     
     performBattleRound() {
@@ -483,11 +511,26 @@ class StickManAdventure {
         }
         
         // 玩家攻击
+        this.isAttacking = true;
         const playerDamage = Math.max(1, this.player.attack - this.currentEnemy.defense);
         this.currentEnemy.health -= playerDamage;
-        this.addBattleLog(`你对 ${this.currentEnemy.name} 造成了 ${playerDamage} 点伤害！`);
-        this.animateAttack('player');
-        this.drawBattleCharacters(); // 立即重绘以显示攻击动画
+        
+        // 添加攻击动画
+        this.animationSystem.addAttackAnimation(
+            this.playerRenderer, 
+            this.enemyRenderer, 
+            this.saveData.equipment.weapon?.id || 'sword'
+        );
+        
+        // 添加击中效果
+        const isCritical = Math.random() < 0.15; // 15%暴击率
+        this.animationSystem.addHitEffect(this.enemyRenderer, playerDamage, isCritical);
+        
+        // 敌人受伤动画
+        this.enemyRenderer.hurt();
+        
+        this.addBattleLog(`你对 ${this.currentEnemy.name} 造成了 ${playerDamage} 点伤害${isCritical ? ' (暴击!)' : ''}！`);
+        this.drawBattleCharacters();
         
         if (this.currentEnemy.health <= 0) {
             this.stopAutoBattle();
@@ -499,11 +542,49 @@ class StickManAdventure {
         setTimeout(() => {
             if (!this.inBattle || this.gameOver) return;
             
-            const enemyDamage = Math.max(1, this.currentEnemy.attack - this.player.defense);
+            this.isAttacking = false;
+            
+            // 敌人使用技能
+            this.enemyRenderer.updateStatus();
+            let enemyDamage = Math.max(1, this.currentEnemy.attack - this.player.defense);
+            
+            // 检查敌人技能
+            if (this.currentEnemy.skills && this.currentEnemy.skills.length > 0) {
+                const skillName = this.currentEnemy.skills[Math.floor(Math.random() * this.currentEnemy.skills.length)];
+                const skill = this.currentEnemy.getSkill(skillName);
+                
+                if (skill && this.currentEnemy.useSkill(skillName, this.playerRenderer, this)) {
+                    // 技能效果
+                    this.animationSystem.addSkillEffect(this.enemyRenderer, skillName, this.playerRenderer);
+                    this.addBattleLog(`${this.currentEnemy.name} 使用了 ${skill.name}！`);
+                    
+                    // 根据技能类型调整伤害
+                    if (skill.type === 'damage') {
+                        enemyDamage = skill.amount || enemyDamage;
+                    } else if (skill.type === 'lifedrain') {
+                        enemyDamage = skill.damage || enemyDamage;
+                    }
+                }
+            }
+            
             this.player.health -= enemyDamage;
-            this.addBattleLog(`${this.currentEnemy.name} 对你造成了 ${enemyDamage} 点伤害！`);
-            this.animateAttack('enemy');
-            this.drawBattleCharacters(); // 立即重绘以显示攻击动画
+            
+            // 添加敌人攻击动画
+            this.animationSystem.addAttackAnimation(
+                this.enemyRenderer, 
+                this.playerRenderer, 
+                'sword'
+            );
+            
+            // 添加击中效果
+            const isEnemyCritical = Math.random() < 0.1; // 10%暴击率
+            this.animationSystem.addHitEffect(this.playerRenderer, enemyDamage, isEnemyCritical);
+            
+            // 玩家受伤动画
+            this.playerRenderer.hurt();
+            
+            this.addBattleLog(`${this.currentEnemy.name} 对你造成了 ${enemyDamage} 点伤害${isEnemyCritical ? ' (暴击!)' : ''}！`);
+            this.drawBattleCharacters();
             
             if (this.player.health <= 0) {
                 this.stopAutoBattle();
@@ -569,14 +650,6 @@ class StickManAdventure {
         // 这里可以选择暂停或继续运行
     }
     
-    startAutoBattle() {
-        if (this.autoBattleInterval) return;
-        
-        this.autoBattleInterval = setInterval(() => {
-            this.performBattleRound();
-        }, 1000 / this.battleSpeed);
-    }
-    
     skipBattle() {
         this.stopAutoBattle();
         
@@ -638,20 +711,33 @@ class StickManAdventure {
         this.stopAutoBattle();
         this.addBattleLog(`你击败了 ${this.currentEnemy.name}！`);
         
+        // 添加敌人死亡动画
+        this.animationSystem.addDeathEffect(this.enemyRenderer);
+        this.enemyRenderer.die();
+        
+        // 最后一次绘制以显示死亡动画
+        this.drawBattleCharacters();
+        
         // 获得金币奖励（替代经验值）
         const baseGold = 10 + Math.floor(Math.random() * 15); // 10-24基础金币
         const healthBonus = Math.floor(this.currentEnemy.maxHealth / 4); // 生命值奖励
         const levelBonus = this.player.level * 2; // 等级奖励
-        const goldGain = baseGold + healthBonus + levelBonus;
+        const eliteBonus = this.currentEnemy.isElite ? 20 : 0;
+        const bossBonus = this.currentEnemy.isBoss ? 100 : 0;
+        const goldGain = baseGold + healthBonus + levelBonus + eliteBonus + bossBonus;
         this.saveData.gold += goldGain;
-        this.addBattleLog(`获得 ${goldGain} 金币！`);
+        this.addBattleLog(`获得 ${goldGain} 金币${this.currentEnemy.isElite ? ' (精英奖励!)' : ''}${this.currentEnemy.isBoss ? ' (Boss奖励!)' : ''}！`);
         
         // 随机装备掉落
         const dropChance = Math.random();
-        if (dropChance < 0.3) { // 30%概率掉落装备
-            const droppedItem = this.equipmentSystem.generateRandomDrop(this.player.level);
+        const actualDropChance = this.currentEnemy.isBoss ? 0.8 : (this.currentEnemy.isElite ? 0.6 : 0.3);
+        if (dropChance < actualDropChance) {
+            const droppedItem = this.equipmentSystem.generateRandomDrop(this.player.level + (this.currentEnemy.isBoss ? 5 : (this.currentEnemy.isElite ? 2 : 0)));
             this.saveData.inventory.push(droppedItem);
-            this.addBattleLog(`获得装备：${droppedItem.name}！`);
+            
+            // 发现新装备
+            const isNewDiscovery = this.encyclopediaSystem.discoverItem(droppedItem.id);
+            this.addBattleLog(`获得装备：${droppedItem.name}！${isNewDiscovery ? ' (新发现!)' : ''}`);
         }
         
         // 恢复少量生命值
@@ -664,6 +750,8 @@ class StickManAdventure {
         // 更新统计
         this.saveData.totalWins++;
         this.saveData.enemiesDefeated++;
+        if (this.currentEnemy.isElite) this.saveData.eliteEnemiesDefeated++;
+        if (this.currentEnemy.isBoss) this.saveData.bossesDefeated++;
         this.saveData.totalGold += goldGain;
         this.player.eventsSurvived++;
         
@@ -873,11 +961,51 @@ class StickManAdventure {
     }
 
     drawBattleCharacters() {
-        // 绘制玩家（白色）
-        this.drawFighter(this.playerCtx, this.elements.playerCanvas, '#fff', 'player');
+        // 清空画布
+        this.playerCtx.clearRect(0, 0, this.elements.playerCanvas.width, this.elements.playerCanvas.height);
+        this.enemyCtx.clearRect(0, 0, this.elements.enemyCanvas.width, this.elements.enemyCanvas.height);
         
-        // 绘制敌人
-        this.drawFighter(this.enemyCtx, this.elements.enemyCanvas, '#ff6b6b', 'enemy');
+        // 获取画布中心
+        const playerCenterX = this.elements.playerCanvas.width / 2;
+        const playerCenterY = this.elements.playerCanvas.height / 2;
+        const enemyCenterX = this.elements.enemyCanvas.width / 2;
+        const enemyCenterY = this.elements.enemyCanvas.height / 2;
+        
+        // 更新渲染器动画
+        this.playerRenderer.update(16, this.isAttacking ? 'attack' : 'idle');
+        this.enemyRenderer.update(16, 'idle');
+        
+        // 渲染玩家
+        this.playerRenderer.render(
+            this.playerCtx, 
+            playerCenterX + this.playerRenderer.position.x, 
+            playerCenterY + this.playerRenderer.position.y, 
+            '#ffffff'
+        );
+        
+        // 渲染玩家武器
+        const weapon = this.saveData.equipment.weapon;
+        if (weapon) {
+            this.playerRenderer.renderWeapon(
+                this.playerCtx,
+                playerCenterX + this.playerRenderer.position.x, 
+                playerCenterY + this.playerRenderer.position.y,
+                weapon.id,
+                Math.floor(this.playerRenderer.animationFrames.attack || 0)
+            );
+        }
+        
+        // 渲染敌人
+        this.enemyRenderer.render(
+            this.enemyCtx, 
+            enemyCenterX + this.enemyRenderer.position.x, 
+            enemyCenterY + this.enemyRenderer.position.y, 
+            this.currentEnemy.color
+        );
+        
+        // 渲染动画效果
+        this.animationSystem.render(this.playerCtx);
+        this.animationSystem.render(this.enemyCtx);
     }
     
     drawFighter(ctx, canvas, color, type) {
