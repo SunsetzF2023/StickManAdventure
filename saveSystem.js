@@ -134,25 +134,138 @@ class SaveSystem {
 // 装备系统
 class EquipmentSystem {
     constructor() {
-        this.equipmentDatabase = this.generateEquipmentDatabase();
+        this.equipmentDatabase = [];
         this.qualityColors = {
             white: '#ffffff',
             green: '#27ae60',
             blue: '#3498db',
             purple: '#9b59b6'
         };
-        
         this.qualityNames = {
             white: '普通',
             green: '精良',
             blue: '稀有',
             purple: '史诗'
         };
+        
+        // 装备图标映射
+        this.equipmentIcons = {
+            // 武器图标
+            'dagger_1': 'fa-dagger',
+            'dagger_2': 'fa-khanda',
+            'dagger_3': 'fa-sickle',
+            'dagger_4': 'fa-knife-kitchen',
+            'sword_1': 'fa-sword',
+            'sword_2': 'fa-sword-laser',
+            'sword_3': 'fa-sword-laser',
+            'sword_4': 'fa-sword-laser',
+            'axe_1': 'fa-axe',
+            'axe_2': 'fa-axe-battle',
+            'axe_3': 'fa-axe-battle',
+            'axe_4': 'fa-axe-battle',
+            'hammer_1': 'fa-hammer',
+            'hammer_2': 'fa-hammer-crash',
+            'hammer_3': 'fa-hammer-crash',
+            'hammer_4': 'fa-hammer-crash',
+            'bow_1': 'fa-bow-arrow',
+            'bow_2': 'fa-bow-arrow',
+            'bow_3': 'fa-bow-arrow',
+            'bow_4': 'fa-bow-arrow',
+            'spear_1': 'fa-spear',
+            'spear_2': 'fa-spear',
+            'spear_3': 'fa-spear',
+            'spear_4': 'fa-spear',
+            'knife_1': 'fa-dagger',
+            'knife_2': 'fa-scalpel',
+            'knife_3': 'fa-scalpel',
+            'knife_4': 'fa-scalpel',
+            'club_1': 'fa-club',
+            'club_2': 'fa-club',
+            'club_3': 'fa-club',
+            'club_4': 'fa-club',
+            
+            // 防具图标
+            'cloth_1': 'fa-vest',
+            'cloth_2': 'fa-vest-patches',
+            'cloth_3': 'fa-vest-patches',
+            'cloth_4': 'fa-vest-patches',
+            'leather_1': 'fa-shield',
+            'leather_2': 'fa-shield-halved',
+            'leather_3': 'fa-shield-halved',
+            'leather_4': 'fa-shield-halved',
+            'chain_1': 'fa-shield',
+            'chain_2': 'fa-shield',
+            'chain_3': 'fa-shield',
+            'chain_4': 'fa-shield',
+            'plate_1': 'fa-shield-virus',
+            'plate_2': 'fa-shield-virus',
+            'plate_3': 'fa-shield-virus',
+            'plate_4': 'fa-shield-virus',
+            
+            // 饰品图标
+            'ring_1': 'fa-ring',
+            'ring_2': 'fa-gem',
+            'ring_3': 'fa-gem',
+            'ring_4': 'fa-gem',
+            'amulet_1': 'fa-amulet',
+            'amulet_2': 'fa-amulet',
+            'amulet_3': 'fa-amulet',
+            'amulet_4': 'fa-amulet',
+            'belt_1': 'fa-belt',
+            'belt_2': 'fa-belt',
+            'belt_3': 'fa-belt',
+            'belt_4': 'fa-belt',
+            'boots_1': 'fa-socks',
+            'boots_2': 'fa-socks',
+            'boots_3': 'fa-socks',
+            'boots_4': 'fa-socks',
+            'gloves_1': 'fa-mitten',
+            'gloves_2': 'fa-mitten',
+            'gloves_3': 'fa-mitten',
+            'gloves_4': 'fa-mitten'
+        };
+        
+        this.generateEquipmentDatabase();
     }
 
+    // 获取装备图标
+    getEquipmentIcon(equipmentId) {
+        // 首先尝试精确匹配ID
+        if (this.equipmentIcons[equipmentId]) {
+            return this.equipmentIcons[equipmentId];
+        }
+        
+        // 如果没有精确匹配，尝试根据类型和品质匹配
+        const parts = equipmentId.split('_');
+        const baseType = parts[0]; // dagger, sword, axe等
+        
+        // 根据装备类型返回默认图标
+        const defaultIcons = {
+            'dagger': 'fa-dagger',
+            'sword': 'fa-sword',
+            'axe': 'fa-axe',
+            'hammer': 'fa-hammer',
+            'bow': 'fa-bow-arrow',
+            'spear': 'fa-spear',
+            'knife': 'fa-dagger',
+            'club': 'fa-club',
+            'cloth': 'fa-vest',
+            'leather': 'fa-shield',
+            'chain': 'fa-shield',
+            'plate': 'fa-shield-virus',
+            'ring': 'fa-ring',
+            'amulet': 'fa-amulet',
+            'belt': 'fa-belt',
+            'boots': 'fa-socks',
+            'gloves': 'fa-mitten'
+        };
+        
+        return defaultIcons[baseType] || 'fa-question';
+    }
+    
     // 生成装备数据库
     generateEquipmentDatabase() {
-        return {
+        this.equipmentDatabase = {
             weapons: [
                 // 白色品质武器 - 基础装备
                 { id: 'wooden_sword', name: '木剑', quality: 'white', type: 'weapon', stats: { attack: 2 }, price: 5, sprite: 'wooden_sword' },

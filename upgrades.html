@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>火柴人冒险 - 装备与养成</title>
     <link rel="stylesheet" href="styles.css">
+    <!-- Font Awesome 图标库 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         .upgrades-container {
             max-width: 800px;
@@ -549,6 +551,51 @@
             border-radius: 10px;
             font-weight: bold;
         }
+
+        /* 装备图标样式 */
+        .item-icon {
+            font-size: 24px;
+            margin-bottom: 8px;
+            text-align: center;
+            color: #ffd700;
+            text-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
+        }
+
+        .item-name {
+            font-size: 12px;
+            font-weight: bold;
+            margin-bottom: 5px;
+            text-align: center;
+        }
+
+        .lottery-item-icon {
+            font-size: 20px;
+            margin-bottom: 5px;
+            color: #ffd700;
+            text-shadow: 0 0 8px rgba(255, 215, 0, 0.8);
+        }
+
+        /* 装备卡片调整 */
+        .item-quality {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+
+        .inventory-item .item-quality,
+        .equipment-slot .item-quality {
+            min-height: 60px;
+            justify-content: center;
+        }
+
+        /* 品质边框颜色 */
+        .quality-white { border: 2px solid #ffffff; }
+        .quality-green { border: 2px solid #27ae60; }
+        .quality-blue { border: 2px solid #3498db; }
+        .quality-purple { border: 2px solid #9b59b6; }
     </style>
 </head>
 <body>
@@ -828,6 +875,7 @@
             renderEquipmentItem(item) {
                 const qualityClass = `quality-${item.quality}`;
                 const qualityName = this.equipmentSystem.getQualityName(item.quality);
+                const iconClass = this.equipmentSystem.getEquipmentIcon(item.id);
                 
                 let statsHTML = '';
                 for (const stat in item.stats) {
@@ -844,7 +892,12 @@
                 }
 
                 return `
-                    <div class="item-quality ${qualityClass}">${item.name}</div>
+                    <div class="item-quality ${qualityClass}">
+                        <div class="item-icon">
+                            <i class="fas ${iconClass}"></i>
+                        </div>
+                        <div class="item-name">${item.name}</div>
+                    </div>
                     <div class="item-stats">${statsHTML}</div>
                     <div class="equipment-actions">
                         <button class="sell-btn" onclick="upgradesUI.sellEquipment('${item.type}')">出售</button>
@@ -860,10 +913,16 @@
                 } else {
                     this.saveData.inventory.forEach((item, index) => {
                         const qualityClass = `quality-${item.quality}`;
+                        const iconClass = this.equipmentSystem.getEquipmentIcon(item.id);
                         inventoryHTML += `
                             <div class="inventory-item ${this.selectedItem === index ? 'selected' : ''}" 
                                  onclick="upgradesUI.selectItem(${index})">
-                                <div class="item-quality ${qualityClass}">${item.name}</div>
+                                <div class="item-quality ${qualityClass}">
+                                    <div class="item-icon">
+                                        <i class="fas ${iconClass}"></i>
+                                    </div>
+                                    <div class="item-name">${item.name}</div>
+                                </div>
                                 <div class="item-stats">品质: ${this.equipmentSystem.getQualityName(item.quality)}</div>
                                 <div class="equipment-actions">
                                     <button class="equip-btn" onclick="upgradesUI.equipItem(${index})">装备</button>
@@ -1027,6 +1086,9 @@
                     const itemDiv = document.createElement('div');
                     itemDiv.className = `lottery-item ${item.quality} lottery-animation`;
                     
+                    // 获取图标
+                    const iconClass = this.equipmentSystem.getEquipmentIcon(item.id);
+                    
                     // 构建属性文本
                     const statsText = Object.entries(item.stats)
                         .map(([stat, value]) => {
@@ -1043,6 +1105,9 @@
                     
                     itemDiv.innerHTML = `
                         <div class="lottery-new">NEW</div>
+                        <div class="lottery-item-icon">
+                            <i class="fas ${iconClass}"></i>
+                        </div>
                         <div class="lottery-item-name">${item.name}</div>
                         <div class="lottery-item-type">${this.getTypeDisplayName(item.type)}</div>
                         <div class="lottery-item-stats">${statsText}</div>
