@@ -788,9 +788,9 @@ class StickManAdventure {
         ctx.strokeStyle = '#ffd700'; // 武器用金色
         ctx.lineWidth = 4;
         
-        // 根据武器类型绘制不同的武器
-        if (weapon.name.includes('匕首')) {
-            // 匕首 - 短小精悍
+        // 根据武器ID或名称绘制不同武器
+        if (weapon.name.includes('匕首') || weapon.id.includes('dagger')) {
+            // 匕首类 - 短小精悍
             ctx.beginPath();
             ctx.moveTo(centerX + 25, centerY - 10);
             ctx.lineTo(centerX + 35, centerY - 25);
@@ -805,8 +805,8 @@ class StickManAdventure {
             ctx.lineTo(centerX + 27, centerY - 5);
             ctx.stroke();
             
-        } else if (weapon.name.includes('剑')) {
-            // 剑 - 经典长剑
+        } else if (weapon.name.includes('剑') || weapon.id.includes('sword')) {
+            // 剑类 - 经典长剑
             ctx.beginPath();
             ctx.moveTo(centerX + 25, centerY - 10);
             ctx.lineTo(centerX + 30, centerY - 40);
@@ -826,8 +826,8 @@ class StickManAdventure {
             ctx.lineTo(centerX + 30, centerY - 5);
             ctx.stroke();
             
-        } else if (weapon.name.includes('斧')) {
-            // 斧头 - 大型武器
+        } else if (weapon.name.includes('斧') || weapon.id.includes('axe')) {
+            // 斧类 - 大型武器
             ctx.beginPath();
             ctx.moveTo(centerX + 25, centerY - 15);
             ctx.lineTo(centerX + 35, centerY - 20);
@@ -840,6 +840,84 @@ class StickManAdventure {
             ctx.beginPath();
             ctx.moveTo(centerX + 30, centerY - 5);
             ctx.lineTo(centerX + 25, centerY + 10);
+            ctx.stroke();
+            
+        } else if (weapon.name.includes('锤') || weapon.id.includes('hammer')) {
+            // 锤类 - 重型武器
+            // 锤头
+            ctx.beginPath();
+            ctx.arc(centerX + 30, centerY - 20, 8, 0, Math.PI * 2);
+            ctx.stroke();
+            
+            // 锤柄
+            ctx.beginPath();
+            ctx.moveTo(centerX + 30, centerY - 12);
+            ctx.lineTo(centerX + 25, centerY + 15);
+            ctx.stroke();
+            
+        } else if (weapon.name.includes('弓') || weapon.id.includes('bow')) {
+            // 弓类 - 远程武器
+            // 弓身
+            ctx.beginPath();
+            ctx.arc(centerX + 25, centerY - 10, 15, -Math.PI/3, Math.PI/3, false);
+            ctx.stroke();
+            
+            // 弓弦
+            ctx.beginPath();
+            ctx.moveTo(centerX + 10, centerY - 10);
+            ctx.lineTo(centerX + 40, centerY - 10);
+            ctx.stroke();
+            
+        } else if (weapon.name.includes('矛') || weapon.id.includes('spear')) {
+            // 矛类 - 长柄武器
+            ctx.beginPath();
+            ctx.moveTo(centerX + 25, centerY - 10);
+            ctx.lineTo(centerX + 45, centerY - 15);
+            ctx.stroke();
+            
+            // 矛头
+            ctx.beginPath();
+            ctx.moveTo(centerX + 45, centerY - 15);
+            ctx.lineTo(centerX + 43, centerY - 20);
+            ctx.lineTo(centerX + 47, centerY - 20);
+            ctx.closePath();
+            ctx.stroke();
+            
+            // 矛柄
+            ctx.beginPath();
+            ctx.moveTo(centerX + 25, centerY - 10);
+            ctx.lineTo(centerX + 20, centerY + 10);
+            ctx.stroke();
+            
+        } else if (weapon.name.includes('刀') || weapon.id.includes('knife') || weapon.id.includes('blade')) {
+            // 刀类 - 弧形武器
+            ctx.beginPath();
+            ctx.moveTo(centerX + 25, centerY - 10);
+            ctx.lineTo(centerX + 38, centerY - 18);
+            ctx.lineTo(centerX + 35, centerY - 25);
+            ctx.lineTo(centerX + 23, centerY - 15);
+            ctx.closePath();
+            ctx.stroke();
+            
+        } else if (weapon.name.includes('棒') || weapon.id.includes('club')) {
+            // 棍棒类 - 简单武器
+            ctx.beginPath();
+            ctx.moveTo(centerX + 25, centerY - 10);
+            ctx.lineTo(centerX + 40, centerY - 5);
+            ctx.stroke();
+            
+        } else {
+            // 默认武器 - 简单剑形
+            ctx.beginPath();
+            ctx.moveTo(centerX + 25, centerY - 10);
+            ctx.lineTo(centerX + 30, centerY - 35);
+            ctx.stroke();
+            
+            ctx.beginPath();
+            ctx.moveTo(centerX + 25, centerY - 10);
+            ctx.lineTo(centerX + 20, centerY - 5);
+            ctx.lineTo(centerX + 30, centerY - 5);
+            ctx.closePath();
             ctx.stroke();
         }
         
@@ -1099,8 +1177,9 @@ class StickManAdventure {
         // 攻击动画偏移
         const attackOffset = this.isAttacking ? 10 : 0;
         
-        if (weapon.name.includes('匕首')) {
-            // 匕首 - 快速刺击
+        // 根据武器ID或名称绘制不同武器
+        if (weapon.name.includes('匕首') || weapon.id.includes('dagger')) {
+            // 匕首类 - 快速刺击
             ctx.beginPath();
             ctx.moveTo(centerX + 25 + attackOffset, centerY - 10);
             ctx.lineTo(centerX + 35 + attackOffset, centerY - 25);
@@ -1109,8 +1188,14 @@ class StickManAdventure {
             ctx.closePath();
             ctx.stroke();
             
-        } else if (weapon.name.includes('剑')) {
-            // 剑 - 刺击动作
+            // 护手
+            ctx.beginPath();
+            ctx.moveTo(centerX + 23 + attackOffset, centerY - 15);
+            ctx.lineTo(centerX + 27 + attackOffset, centerY - 5);
+            ctx.stroke();
+            
+        } else if (weapon.name.includes('剑') || weapon.id.includes('sword')) {
+            // 剑类 - 刺击动作
             ctx.beginPath();
             ctx.moveTo(centerX + 25 + attackOffset, centerY - 10);
             ctx.lineTo(centerX + 30 + attackOffset, centerY - 40);
@@ -1124,8 +1209,14 @@ class StickManAdventure {
             ctx.closePath();
             ctx.stroke();
             
-        } else if (weapon.name.includes('斧')) {
-            // 斧 - 大力劈砍
+            // 护手
+            ctx.beginPath();
+            ctx.moveTo(centerX + 20, centerY - 5);
+            ctx.lineTo(centerX + 30, centerY - 5);
+            ctx.stroke();
+            
+        } else if (weapon.name.includes('斧') || weapon.id.includes('axe')) {
+            // 斧类 - 大力劈砍
             const swingAngle = this.isAttacking ? Math.PI / 6 : 0;
             const swingX = Math.sin(swingAngle) * 15;
             const swingY = Math.cos(swingAngle) * 15;
@@ -1135,6 +1226,121 @@ class StickManAdventure {
             ctx.lineTo(centerX + 35 + swingX, centerY - 20 + swingY);
             ctx.lineTo(centerX + 40 + swingX, centerY - 10 + swingY);
             ctx.lineTo(centerX + 30 + swingX, centerY - 5 + swingY);
+            ctx.closePath();
+            ctx.stroke();
+            
+            // 斧柄
+            ctx.beginPath();
+            ctx.moveTo(centerX + 30 + swingX, centerY - 5 + swingY);
+            ctx.lineTo(centerX + 25 + swingX, centerY + 10 + swingY);
+            ctx.stroke();
+            
+        } else if (weapon.name.includes('锤') || weapon.id.includes('hammer')) {
+            // 锤类 - 重击动作
+            const swingAngle = this.isAttacking ? Math.PI / 4 : 0;
+            const swingX = Math.sin(swingAngle) * 20;
+            const swingY = Math.cos(swingAngle) * 20;
+            
+            // 锤头
+            ctx.beginPath();
+            ctx.arc(centerX + 30 + swingX, centerY - 20 + swingY, 8, 0, Math.PI * 2);
+            ctx.stroke();
+            
+            // 锤柄
+            ctx.beginPath();
+            ctx.moveTo(centerX + 30 + swingX, centerY - 12 + swingY);
+            ctx.lineTo(centerX + 25 + swingX, centerY + 15 + swingY);
+            ctx.stroke();
+            
+        } else if (weapon.name.includes('弓') || weapon.id.includes('bow')) {
+            // 弓类 - 拉弓动作
+            const bowDraw = this.isAttacking ? 10 : 0;
+            
+            // 弓身
+            ctx.beginPath();
+            ctx.arc(centerX + 25, centerY - 10, 15, -Math.PI/3, Math.PI/3, false);
+            ctx.stroke();
+            
+            // 弓弦
+            ctx.beginPath();
+            ctx.moveTo(centerX + 10, centerY - 10);
+            ctx.lineTo(centerX + 25, centerY - 10 + bowDraw);
+            ctx.lineTo(centerX + 40, centerY - 10);
+            ctx.stroke();
+            
+            // 箭（如果正在攻击）
+            if (this.isAttacking) {
+                ctx.beginPath();
+                ctx.moveTo(centerX + 25, centerY - 10);
+                ctx.lineTo(centerX + 45, centerY - 10);
+                ctx.stroke();
+                
+                // 箭头
+                ctx.beginPath();
+                ctx.moveTo(centerX + 45, centerY - 10);
+                ctx.lineTo(centerX + 42, centerY - 13);
+                ctx.moveTo(centerX + 45, centerY - 10);
+                ctx.lineTo(centerX + 42, centerY - 7);
+                ctx.stroke();
+            }
+            
+        } else if (weapon.name.includes('矛') || weapon.id.includes('spear')) {
+            // 矛类 - 突刺动作
+            ctx.beginPath();
+            ctx.moveTo(centerX + 25 + attackOffset, centerY - 10);
+            ctx.lineTo(centerX + 45 + attackOffset, centerY - 15);
+            ctx.stroke();
+            
+            // 矛头
+            ctx.beginPath();
+            ctx.moveTo(centerX + 45 + attackOffset, centerY - 15);
+            ctx.lineTo(centerX + 43 + attackOffset, centerY - 20);
+            ctx.lineTo(centerX + 47 + attackOffset, centerY - 20);
+            ctx.closePath();
+            ctx.stroke();
+            
+            // 矛柄
+            ctx.beginPath();
+            ctx.moveTo(centerX + 25, centerY - 10);
+            ctx.lineTo(centerX + 20, centerY + 10);
+            ctx.stroke();
+            
+        } else if (weapon.name.includes('刀') || weapon.id.includes('knife') || weapon.id.includes('blade')) {
+            // 刀类 - 挥砍动作
+            const slashAngle = this.isAttacking ? Math.PI / 8 : 0;
+            const slashX = Math.sin(slashAngle) * 12;
+            const slashY = Math.cos(slashAngle) * 12;
+            
+            ctx.beginPath();
+            ctx.moveTo(centerX + 25 + slashX, centerY - 10 + slashY);
+            ctx.lineTo(centerX + 38 + slashX, centerY - 18 + slashY);
+            ctx.lineTo(centerX + 35 + slashX, centerY - 25 + slashY);
+            ctx.lineTo(centerX + 23 + slashX, centerY - 15 + slashY);
+            ctx.closePath();
+            ctx.stroke();
+            
+        } else if (weapon.name.includes('棒') || weapon.id.includes('club')) {
+            // 棍棒类 - 简单重击
+            const swingAngle = this.isAttacking ? Math.PI / 6 : 0;
+            const swingX = Math.sin(swingAngle) * 18;
+            const swingY = Math.cos(swingAngle) * 18;
+            
+            ctx.beginPath();
+            ctx.moveTo(centerX + 25 + swingX, centerY - 10 + swingY);
+            ctx.lineTo(centerX + 40 + swingX, centerY - 5 + swingY);
+            ctx.stroke();
+            
+        } else {
+            // 默认武器 - 简单剑形
+            ctx.beginPath();
+            ctx.moveTo(centerX + 25 + attackOffset, centerY - 10);
+            ctx.lineTo(centerX + 30 + attackOffset, centerY - 35);
+            ctx.stroke();
+            
+            ctx.beginPath();
+            ctx.moveTo(centerX + 25, centerY - 10);
+            ctx.lineTo(centerX + 20, centerY - 5);
+            ctx.lineTo(centerX + 30, centerY - 5);
             ctx.closePath();
             ctx.stroke();
         }
