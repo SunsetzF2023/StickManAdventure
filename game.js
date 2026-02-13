@@ -115,6 +115,11 @@ class StickManAdventure {
         this.elements.speedBtn.addEventListener('click', () => this.toggleBattleSpeed());
         this.elements.skipBtn.addEventListener('click', () => this.skipBattle());
         this.elements.restartBtn.addEventListener('click', () => this.restartGame());
+        
+        // 添加页面可见性监听
+        document.addEventListener('visibilitychange', () => this.handleVisibilityChange());
+        window.addEventListener('focus', () => this.handleWindowFocus());
+        window.addEventListener('blur', () => this.handleWindowBlur());
     }
     
     startGame() {
@@ -531,16 +536,55 @@ class StickManAdventure {
         }
     }
     
+    handleVisibilityChange() {
+        if (document.hidden) {
+            // 页面隐藏时暂停游戏
+            this.wasAutoBattleRunning = !!this.autoBattleInterval;
+            if (this.wasAutoBattleRunning) {
+                this.stopAutoBattle();
+                this.addBattleLog("游戏已暂停（切换标签页）");
+            }
+        } else {
+            // 页面显示时恢复游戏
+            if (this.wasAutoBattleRunning && this.inBattle) {
+                this.startAutoBattle();
+                this.addBattleLog("游戏已恢复");
+            }
+        }
+    }
+    
+    handleWindowFocus() {
+        // 窗口获得焦点时确保游戏运行
+        if (this.inBattle && !this.autoBattleInterval && !this.gameOver) {
+            this.startAutoBattle();
+        }
+    }
+    
+    handleWindowBlur() {
+        // 窗口失去焦点时的处理
+        // 这里可以选择暂停或继续运行
+    }
+    
+    startAutoBattle() {
+        if (this.autoBattleInterval) return;
+        
+        this.autoBattleInterval = setInterval(() => {
+            this.performBattleRound();
+        }, 1000 / this.battleSpeed);
+    }
+    
     skipBattle() {
         this.stopAutoBattle();
         
-        // 直接计算战斗结果
-        const playerTotalDamage = this.player.attack * 10; // 假设10回合
-        const enemyTotalDamage = this.currentEnemy.attack * 10;
+        // 更智能的战斗结果计算
+        const playerDPS = this.player.attack * (1 + this.player.accuracy);
+        const enemyDPS = this.currentEnemy.attack * (1 - this.player.defense * 0.1);
+        const playerSurvivalTime = this.player.health / Math.max(1, enemyDPS);
+        const enemySurvivalTime = this.currentEnemy.health / Math.max(1, playerDPS);
         
         this.addBattleLog("跳过战斗，计算结果...");
         
-        if (playerTotalDamage >= this.currentEnemy.health) {
+        if (playerSurvivalTime >= enemySurvivalTime) {
             // 玩家胜利
             this.currentEnemy.health = 0;
             this.winBattle();
@@ -591,7 +635,10 @@ class StickManAdventure {
         this.addBattleLog(`你击败了 ${this.currentEnemy.name}！`);
         
         // 获得金币奖励（替代经验值）
-        const goldGain = 10 + (this.currentEnemy.maxHealth / 2) + Math.floor(Math.random() * 20);
+        const baseGold = 10 + Math.floor(Math.random() * 15); // 10-24基础金币
+        const healthBonus = Math.floor(this.currentEnemy.maxHealth / 4); // 生命值奖励
+        const levelBonus = this.player.level * 2; // 等级奖励
+        const goldGain = baseGold + healthBonus + levelBonus;
         this.saveData.gold += goldGain;
         this.addBattleLog(`获得 ${goldGain} 金币！`);
         
@@ -616,8 +663,9 @@ class StickManAdventure {
         this.saveData.totalGold += goldGain;
         this.player.eventsSurvived++;
         
-        // 保存存档
+        // 立即保存和更新UI
         this.saveSystem.saveSave(this.saveData);
+        this.updateUI();
         
         setTimeout(() => {
             this.inBattle = false;
@@ -667,8 +715,8 @@ class StickManAdventure {
                     <span>${this.player.eventsSurvived}</span>
                 </div>
                 <div class="final-stat-item">
-                    <span>获得金币:</span>
-                    <span>${this.saveData.gold}</span>
+                    <span>本次获得金币:</span>
+                    <span>${this.saveData.totalGold}</span>
                 </div>
                 <div class="final-stat-item">
                     <span>总胜场:</span>
