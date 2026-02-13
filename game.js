@@ -52,9 +52,6 @@ class StickManAdventure {
         this.attackFrame = 0;
         this.isAttacking = false;
         
-        // 初始化战斗引擎
-        this.battleEngine = new BattleEngine();
-        
         this.initializeElements();
         this.bindEvents();
         this.updateUI();
